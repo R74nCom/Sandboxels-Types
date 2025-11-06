@@ -195,7 +195,7 @@ declare function pixelTempCheck(pixel: Pixel): void
 declare function choose(array: any[]): any
 declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
-declare function addElement(key: string, obj: Elem): void
+declare function addElement(key: string, obj: Element): void
 declare function addCanvasLayer(name: string): void
 declare function drawPlus(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
 declare function drawSquare(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
@@ -340,7 +340,7 @@ interface Views {
 
 declare var viewInfo: Record<string, Views>
 
-declare var elements: Record<string, Elem>
+declare var elements: Record<string, Element>
 
 declare var pixelMap: (Pixel | null)[][]
 
