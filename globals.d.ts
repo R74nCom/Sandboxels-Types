@@ -39,7 +39,7 @@ interface Pixel {
      * Any additional custom properties.
      * Allows dynamic data storage for mods.
      */
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 /**
@@ -233,16 +233,16 @@ declare function tryDelete(x: number, y: number): object | null
 declare function modIsEnabled(modName: string): boolean
 declare function tpsPrompt(): void
 declare function explodeAt(x: number, y: number, radius: number, fire: string): void
-declare function mostSimilarElement(s: any): string | null
+declare function mostSimilarElement(s: unknown): string | null
 declare function RGBToHex(rgb: [number, number, number]): string
 declare function hexToRGB(hex: string): { r: number, g: number, b: number } | null
 declare function RGBToHSL(rgb: [number, number, number]): [number, number, number]
 declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 declare function eListAdd(listName: string, itemList: string[] | string): void
 declare function drawDefault(ctx: CanvasRenderingContext2D, pixel: Pixel): void
-declare function shuffleArray(array: any[]): void
+declare function shuffleArray(array: unknown[]): void
 declare function pixelTempCheck(pixel: Pixel): void
-declare function choose(array: any[]): any
+declare function choose<T>(array: T[]): T
 declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
 declare function addElement(key: string, obj: Element): void
@@ -289,8 +289,8 @@ interface ElementReaction {
     chance?: number
     temp1?: number
     temp2?: number
-    attr1?: { [key: string]: any }
-    attr2?: { [key: string]: any }
+    attr1?: { [key: string]: unknown }
+    attr2?: { [key: string]: unknown }
     tempMin?: number
     tempMax?: number
     oneway?: boolean
@@ -353,8 +353,6 @@ declare var behaviors: {
     RELEASE_MOISTURE: (pixel: Pixel) => void
     DO_TICK: (pixel: Pixel) => void
     SEEDRISE: (pixel: Pixel) => void
-
-    [key: string]: any
 }
 
 type RenderPresets = (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
@@ -394,7 +392,7 @@ declare var isMobile: boolean
 declare var currentPixels: Pixel[]
 
 interface Views {
-    [key: string]: any
+    [key: string]: unknown
 }
 
 declare var viewInfo: Record<string, Views>
@@ -411,11 +409,11 @@ declare var interactCoords: [number, number][]
 declare var biCoords: [number, number][]
 
 declare var settings: {
-    [key: string]: any
+    [key: string]: unknown
 }
 
 declare var keybinds: {
-    [key: string]: () => any
+    [key: string]: () => void
 }
 
 declare var shiftDown: number
@@ -427,7 +425,7 @@ declare var view: number
 declare var paused: boolean
 
 declare var btemp: {
-    [key: string]: any
+    [key: string]: unknown
 }
 
 declare var textures: {
@@ -542,7 +540,7 @@ interface Element {
     movable?: boolean
     hardness?: number
     foodNeed?: number
-    properties?: { [key: string]: any }
+    properties?: { [key: string]: unknown }
     maxSize?: number
     baby?: string
     egg?: string
@@ -570,5 +568,5 @@ interface Element {
     breakInto?: string | string[]
     breakIntoColor?: string | string[]
 
-    [key: string]: any;
+    [key: string]: unknown;
 }
