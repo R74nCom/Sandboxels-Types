@@ -234,15 +234,10 @@ declare function modIsEnabled(modName: string): boolean
 declare function tpsPrompt(): void
 declare function explodeAt(x: number, y: number, radius: number, fire: string): void
 declare function mostSimilarElement(s: unknown): string | null
-declare function RGBToHex(rgb: [number, number, number]): string
-declare function hexToRGB(hex: string): { r: number, g: number, b: number } | null
-declare function RGBToHSL(rgb: [number, number, number]): [number, number, number]
-declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 declare function eListAdd(listName: string, itemList: string[] | string): void
 declare function drawDefault(ctx: CanvasRenderingContext2D, pixel: Pixel): void
 declare function shuffleArray(array: unknown[]): void
 declare function pixelTempCheck(pixel: Pixel): void
-declare function choose<T>(array: T[]): T
 declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
 declare function addElement(key: string, obj: Element): void
@@ -250,7 +245,6 @@ declare function addCanvasLayer(name: string): void
 declare function drawPlus(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
 declare function drawSquare(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
 declare function focusGame(): void
-declare function mean(arr: number[]): number
 declare function onAddElement(callback: () => void): void
 declare function outOfSight(x: number, y: number): boolean
 declare function onBorder(x: number, y: number): boolean
@@ -270,7 +264,53 @@ declare function toggleShift(): void
 declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
+
+// --- Non game specific utilities
+
+// General utilites
+/** Randomly chooses an item from the array */
+declare function choose<T>(array: T[]): T
+/** Averages all values in an array */
+declare function mean(arr: number[]): number
+/** Averages a set of RGB values */
 declare function averageRGB(rgblist: [number, number, number][]): string
+
+// Colour related utilites
+/** Convert 3 RGB values to the hex values in the format `#rrggbb`. Outputs are lowercase. */
+declare function RGBToHex(rgb: [number, number, number]): string
+/** 
+ * Parses a hex string in the format `#rrggbb`. Case insensitive. 
+ * Returns null if it can't parse the string.
+ */
+declare function hexToRGB(hex: string): { r: number, g: number, b: number } | null
+
+// These descriptions are stolen from https://gist.github.com/mjackson/5311256, which is also
+// where the game's code gets it from.
+/**
+ * Converts an RGB color value to HSL. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes r, g, and b are contained in the set [0, 255] and
+ * returns h, s, and l in the set [0, 1].
+ *
+ * @param - The red color value
+ * @param - The green color value
+ * @param - The blue color value
+ * @return - The HSL representation
+ */
+declare function RGBToHSL(rgb: [number, number, number]): [number, number, number]
+
+/**
+ * Converts an HSL color value to RGB. Conversion formula
+ * adapted from http://en.wikipedia.org/wiki/HSL_color_space.
+ * Assumes h, s, and l are contained in the set [0, 1] and
+ * returns r, g, and b in the set [0, 255].
+ *
+ * @param - The hue
+ * @param - The saturation
+ * @param - The lightness
+ * @return - The RGB representation
+ */
+declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 
 /**
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
@@ -452,8 +492,12 @@ type MainCategories =
 
 type Category = MainCategories | (string & Record<never, never>);
 
+/** The height of the canvas in pixels */
 declare var height: number
+/** The width of the canvas in pixels */
 declare var width: number
+/** The size of each pixel (on the canvas) in pixels on the canvas */
+declare var pixelSize: number
 
 // Some of these might be wrong
 interface Element {
