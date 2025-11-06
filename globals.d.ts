@@ -156,11 +156,61 @@ declare function releaseElement(pixel: Pixel, element: string, count?: number, r
  * @param leaveBehind If the pixel should leave a clone of itself behind
  */
 declare function movePixel(pixel: Pixel, x: number, y: number, leaveBehind?: boolean): void
+/**
+ * Show a prompt with only text in it.
+ *
+ * @param text - The text in to show in the prompt.
+ * @param handler - The callback to run after the ok button is pressed.
+ * @param title - The title for the prompt.
+ */
 declare function promptText(text: string, handler: Function, title?: string): void
-declare function promptConfirm(text: string, handler: (value: string | undefined) => void, title?: string, danger?: boolean): void
-declare function promptInput(text: string, handler: (value: string | undefined) => void, title?: string, defaultInput?: string): void
-declare function promptChoose(text: string, choices: string[], handler: (value: string | undefined) => void, title?: string): void
-declare function promptDir(text: string, handler: (value: string | undefined) => void, title?: string): void
+/**
+ * Show a prompt with confirm/cancel buttons
+ * 
+ * @param text - The text to show in the prompt
+ * @param handler - The callback to run. `value` is `true` when "confirm" is pressed, `false`
+ * when "cancel" is pressed, and undefined if the close button is pressed.
+ * @param title - The title for the prompt
+ * @param danger - Whether to colour the "confirm" option red to show that the action is dangerous
+ */
+declare function promptConfirm(text: string, handler: (value: boolean | undefined) => void, title?: string, danger?: boolean): void
+/**
+ * Show a prompt asking for text in a textbox.
+ * 
+ * @param text - The text to show in the prompt
+ * @param handler - The callback to run. The `value` parameter is is the text in the prompt. It's not
+ * called at all if the window is closed directly.
+ * @param title - The title for the prompt
+ * @param defaultInput - The default value for the textbox
+ */
+declare function promptInput(text: string, handler: (value: string) => void, title?: string, defaultInput?: string): void
+/**
+ * Show a prompt to choose between a set of options.
+ * 
+ * @param text - The text to show in the prompt
+ * @param handler - The callback to run. The `value` parameter is the choice selected. It's not called
+ * at all if the window is closed directly.
+ * @param title - The title for the prompt
+ * @param defaultInput - The default value for the textbox
+ */
+declare function promptChoose(text: string, choices: string[], handler: (value: string) => void, title?: string): void
+/**
+ * Show a prompt to choose between each direction.
+ * 
+ * @param text - The text to show in the prompt
+ * @param handler
+ * The callback to run. The `value` parameter is the direction selected. It's not called
+ * at all if the window is closed directly.
+ * 
+ * The values for the value parameter are:\
+ * 0: left\
+ * 1: down\
+ * 2: right\
+ * 3: up
+ * @param title - The title for the prompt
+ * @param defaultInput - The default value for the textbox
+ */
+declare function promptDir(text: string, handler: (value: 0|1|2|3) => void, title?: string): void
 declare function runEveryTick(callback: () => void): void
 declare function runAfterLoad(callback: () => void): void
 declare function runAfterAutogen(callback: () => void): void
@@ -498,4 +548,3 @@ interface Element {
 
     [key: string]: any;
 }
-
