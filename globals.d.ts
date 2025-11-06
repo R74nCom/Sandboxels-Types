@@ -272,6 +272,15 @@ declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function averageRGB(rgblist: [number, number, number][]): string
 
+/**
+ * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
+ */
+type Behavior = [
+    `${string}|${string}|${string}`,
+    `${string}|${string}|${string}`,
+    `${string}|${string}|${string}`
+]
+
 interface ElementReaction {
     elem1?: string | null | (string | null)[]
     elem2?: string | null | (string | null)[]
