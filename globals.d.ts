@@ -451,9 +451,13 @@ declare var width: number
 // Some of these might be wrong
 interface Element {
     id?: number
+    /** The name of the element */
     name?: string
+    /** Any aliases for an element (e.g. alcohol is aliased as ethanol ingame) */
     alias?: string | string[]
+    /** The category an element belongs to */
     category?: Category
+    /** A description for the element */
     desc?: string
     extraInfo?: string
     related?: string | string[]
@@ -462,6 +466,10 @@ interface Element {
     canPlace?: boolean
     nocheer?: boolean
     forceAutoGen?: boolean
+    /** 
+     * The colour or set of colours for an element. One is randomly selected if there's
+     * an array.
+     */
     color?: string | string[]
     colorObject?: { r: number; g: number; b: number }[]
     colorOn?: string | string[]
@@ -475,6 +483,7 @@ interface Element {
     firedColors?: { [element: string]: string[] }
     behavior?: Behavior
     behaviorOn?: Behavior
+    /** The function to run every tick for a pixel. The pixel is provided as an argument */
     tick?: ((pixel: Pixel) => void)
     onClicked?: (pixel: Pixel) => void
     tick1?: (pixel: Pixel) => void
@@ -482,12 +491,15 @@ interface Element {
     tool?: (pixel: Pixel) => void
     onMouseUp?: () => void
     onMouseDown?: () => void
+    /** Run when an element is selected. */
     onSelect?: () => void
     onUnselect?: () => void
     onPlace?: (pixel: Pixel) => void
     onDelete?: (pixel: Pixel) => void
     onChange?: (pixel: Pixel) => void
+    /** Run when a pixel is mixed. The pixel is provided as an argument. */
     onMix?: (pixel: Pixel) => void
+    /** Run when a pixel is broken. The pixel is provided as an argument. */
     onBreak?: (pixel: Pixel) => void
     perTick?: () => void
     hoverStat?: (pixel: Pixel) => void
@@ -499,7 +511,9 @@ interface Element {
     stateLowName?: string
     stateLowColor?: string
     stateLowColorMultiplier?: number[] | number
+    /** The temperature at which the element changes to the element provided by `stateHigh` */
     tempHigh?: number
+    /** The element to change to at `tempHigh` */
     stateHigh?: string | (string | null)[]
     stateHighName?: string
     stateHighColor?: string
@@ -543,6 +557,7 @@ interface Element {
     rotatable?: boolean
     flippableX?: boolean
     flippableY?: boolean
+    /** The element or list of elements to break into. */
     breakInto?: string | string[]
     breakIntoColor?: string | string[]
 
