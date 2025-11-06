@@ -413,7 +413,7 @@ declare var settings: {
 }
 
 declare var keybinds: {
-    [key: string]: () => void
+    [key: string]: () => unknown
 }
 
 declare var shiftDown: number
