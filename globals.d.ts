@@ -559,14 +559,14 @@ interface GameElement {
 	reactions?: { [key: string]: ElementReaction }
 	temp?: number
 	tempLow?: number
-	stateLow?: string | (string | null)[]
+	stateLow?: string | null | (string | null)[]
 	stateLowName?: string
 	stateLowColor?: string
 	stateLowColorMultiplier?: number[] | number
 	/** The temperature at which the element changes to the element provided by `stateHigh` */
 	tempHigh?: number
 	/** The element to change to at `tempHigh` */
-	stateHigh?: string | (string | null)[]
+	stateHigh?: string | null | (string | null)[]
 	stateHighName?: string
 	stateHighColor?: string
 	stateHighColorMultiplier?: number[] | number
