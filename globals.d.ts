@@ -1,5 +1,3 @@
-// Current file made by Cube14
-// If you have some stuff i missed go ahead and add it
 /**
  * Represents a single pixel in the game.
  */
