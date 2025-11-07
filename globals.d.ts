@@ -1,43 +1,44 @@
+
 /**
  * Represents a single pixel in the game.
  */
 interface Pixel {
-    /** X coordinate of the pixel */
-    x: number;
-    /** Y coordinate of the pixel */
-    y: number;
-    /** The element type of the pixel */
-    element: string;
-    /** The color of the pixel, usually in RGB but can be hex */
-    color: string;
-    /** Opacity of the pixel (0 = fully transparent, 1 = fully opaque) */
-    alpha?: number;
+	/** X coordinate of the pixel */
+	x: number;
+	/** Y coordinate of the pixel */
+	y: number;
+	/** The element type of the pixel */
+	element: string;
+	/** The color of the pixel, usually in RGB but can be hex */
+	color: string;
+	/** Opacity of the pixel (0 = fully transparent, 1 = fully opaque) */
+	alpha?: number;
 
-    /** Current temperature of the pixel */
-    temp: number;
-    /** The tick when the pixel was created */
-    start: number;
+	/** Current temperature of the pixel */
+	temp: number;
+	/** The tick when the pixel was created */
+	start: number;
 
-    /** Whether the pixel is currently burning */
-    burning?: boolean;
-    /** Time when burning started */
-    burnStart?: number;
+	/** Whether the pixel is currently burning */
+	burning?: boolean;
+	/** Time when burning started */
+	burnStart?: number;
 
-    /** Charge level of the pixel */
-    charge?: number;
+	/** Charge level of the pixel */
+	charge?: number;
 
-    /** Whether the pixel is flipped horizontally */
-    flipX?: boolean;
-    /** Whether the pixel is flipped vertically */
-    flipY?: boolean;
-    /** Rotation of the pixel (radians or degrees depending on context) */
-    r?: number;
+	/** Whether the pixel is flipped horizontally */
+	flipX?: boolean;
+	/** Whether the pixel is flipped vertically */
+	flipY?: boolean;
+	/** Rotation of the pixel (radians or degrees depending on context) */
+	r?: number;
 
-    /**
-     * Any additional custom properties.
-     * Allows dynamic data storage for mods.
-     */
-    [key: string]: unknown;
+	/**
+	 * Any additional custom properties.
+	 * Allows dynamic data storage for mods.
+	 */
+	[key: string]: unknown;
 }
 
 /**
@@ -46,14 +47,14 @@ interface Pixel {
  * @param x - x coordinate of pixel
  * @param y - y coordinate of pixel
  * @throws {TypeError} If coordinates are out of bounds
- * @example 
+ * @example
  * ```js
  * createPixel("wood", 10, 10);
  * ```
  */
 declare function createPixel(element: string[] | string, x: number, y: number): void
 /**
- * Deletes a pixel at coordinates (x, y) 
+ * Deletes a pixel at coordinates (x, y)
  * @param x - x coordinate of pixel
  * @param y - y coordinate of pixel
  * @example
@@ -103,9 +104,9 @@ declare function clonePixel(pixel: Pixel, x: number, y: number): void
  * Returns true if coordinates (x, y) are empty.
  * If oob is true or the pixel is out of bounds it will return true if ignoreBounds is true.
  * Otherwise it will return false.
- * @param x 
- * @param y 
- * @param ignoreBounds 
+ * @param x
+ * @param y
+ * @param ignoreBounds
  * @param oob
 
  * @example
@@ -126,7 +127,7 @@ declare function logMessage(text: string): void
 /**
  * Attempts to move a pixel to the new coordinates
  * @param pixel - The pixel that will be moved
- * @param nx - New x coordinate of pixel 
+ * @param nx - New x coordinate of pixel
  * @param ny - New y coordinate of pixel
  * @param leaveBehind - The element that will be left behind if any
  */
@@ -164,7 +165,7 @@ declare function movePixel(pixel: Pixel, x: number, y: number, leaveBehind?: boo
 declare function promptText(text: string, handler: Function, title?: string): void
 /**
  * Show a prompt with confirm/cancel buttons
- * 
+ *
  * @param text - The text to show in the prompt
  * @param handler - The callback to run. `value` is `true` when "confirm" is pressed, `false`
  * when "cancel" is pressed, and undefined if the close button is pressed.
@@ -174,7 +175,7 @@ declare function promptText(text: string, handler: Function, title?: string): vo
 declare function promptConfirm(text: string, handler: (value: boolean | undefined) => void, title?: string, danger?: boolean): void
 /**
  * Show a prompt asking for text in a textbox.
- * 
+ *
  * @param text - The text to show in the prompt
  * @param handler - The callback to run. The `value` parameter is is the text in the prompt. It's not
  * called at all if the window is closed directly.
@@ -184,7 +185,7 @@ declare function promptConfirm(text: string, handler: (value: boolean | undefine
 declare function promptInput(text: string, handler: (value: string) => void, title?: string, defaultInput?: string): void
 /**
  * Show a prompt to choose between a set of options.
- * 
+ *
  * @param text - The text to show in the prompt
  * @param handler - The callback to run. The `value` parameter is the choice selected. It's not called
  * at all if the window is closed directly.
@@ -194,12 +195,12 @@ declare function promptInput(text: string, handler: (value: string) => void, tit
 declare function promptChoose(text: string, choices: string[], handler: (value: string) => void, title?: string): void
 /**
  * Show a prompt to choose between each direction.
- * 
+ *
  * @param text - The text to show in the prompt
  * @param handler
  * The callback to run. The `value` parameter is the direction selected. It's not called
  * at all if the window is closed directly.
- * 
+ *
  * The values for the value parameter are:\
  * 0: left\
  * 1: down\
@@ -238,7 +239,7 @@ declare function shuffleArray(array: unknown[]): void
 declare function pixelTempCheck(pixel: Pixel): void
 declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
-declare function addElement(key: string, obj: Element): void
+declare function addElement(key: string, obj: GameElement): void
 declare function addCanvasLayer(name: string): void
 declare function drawPlus(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
 declare function drawSquare(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
@@ -276,8 +277,8 @@ declare function averageRGB(rgblist: [number, number, number][]): string
 // Colour related utilites
 /** Convert 3 RGB values to the hex values in the format `#rrggbb`. Outputs are lowercase. */
 declare function RGBToHex(rgb: [number, number, number]): string
-/** 
- * Parses a hex string in the format `#rrggbb`. Case insensitive. 
+/**
+ * Parses a hex string in the format `#rrggbb`. Case insensitive.
  * Returns null if it can't parse the string.
  */
 declare function hexToRGB(hex: string): { r: number, g: number, b: number } | null
@@ -314,98 +315,98 @@ declare function HSLtoRGB(hsl: [number, number, number]): [number, number, numbe
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
  */
 type Behavior = [
-    `${string}|${string}|${string}`,
-    `${string}|${string}|${string}`,
-    `${string}|${string}|${string}`
+	`${string}|${string}|${string}`,
+	`${string}|${string}|${string}`,
+	`${string}|${string}|${string}`
 ]
 
 interface ElementReaction {
-    elem1?: string | null | (string | null)[]
-    elem2?: string | null | (string | null)[]
-    color1?: string
-    color2?: string
-    chance?: number
-    temp1?: number
-    temp2?: number
-    attr1?: { [key: string]: unknown }
-    attr2?: { [key: string]: unknown }
-    tempMin?: number
-    tempMax?: number
-    oneway?: boolean
-    charged?: boolean
-    burning1?: boolean
-    burning2?: boolean
-    y?: [number, number]
-    setting?: string
-    charge1?: number
-    charge2?: number
-    stain1?: string
-    stain2?: string
-    func?: ((pixel1: Pixel, pixel2: Pixel) => void)
+	elem1?: string | null | (string | null)[]
+	elem2?: string | null | (string | null)[]
+	color1?: string
+	color2?: string
+	chance?: number
+	temp1?: number
+	temp2?: number
+	attr1?: { [key: string]: unknown }
+	attr2?: { [key: string]: unknown }
+	tempMin?: number
+	tempMax?: number
+	oneway?: boolean
+	charged?: boolean
+	burning1?: boolean
+	burning2?: boolean
+	y?: [number, number]
+	setting?: string
+	charge1?: number
+	charge2?: number
+	stain1?: string
+	stain2?: string
+	func?: ((pixel1: Pixel, pixel2: Pixel) => void)
 }
 
 declare var behaviors: {
-    POWDER_OLD: string[]
-    POWDER: (pixel: Pixel) => void
-    AGPOWDER: string[]
-    LIQUID_OLD: string[]
-    LIQUID: (pixel: Pixel) => void
-    SUPERFLUID_OLD: string[]
-    SUPERFLUID: (pixel: Pixel) => void
-    LIGHTWEIGHT: string[]
-    SLIDE: string[]
-    AGLIQUID: string[]
-    WALL: string[]
-    UL_UR: string[]
-    UL_UR_OPTIMIZED: (pixel: Pixel) => void
-    GAS_OLD: string[]
-    GAS: (pixel: Pixel) => void
-    DGAS_OLD: string
-    DGAS: (pixel: Pixel) => void
-    SUPPORT: string[]
-    SUPPORT_POWDER: string[]
-    DELETE: string[]
-    FILL: string[]
-    CLONER: string[]
-    CLONE_ON_CLICK: (pixel: Pixel, element: string) => void
-    STAIN_ON_MIX: (pixel1: Pixel, pixel2: Pixel) => void
-    STURDYPOWDER_OLD: string[]
-    STURDYPOWDER: (pixel: Pixel) => void
-    SELF_DELETE: string[]
-    FOAM: string[]
-    BUBBLE: string[]
-    STICKY: string[]
-    MOLTEN: (pixel: Pixel) => void
-    MOLTEN_OLD: string[]
-    RADPOWDER: string[]
-    RADMOLTEN: string[]
-    RADLIQUID: string[]
-    BOUNCY: (pixel: Pixel) => void
-    FEEDPIXEL: (pixel: Pixel) => void
-    KILLPIXEL1: (pixel: Pixel) => void
-    KILLPIXEL2: (pixel1: Pixel, pixel2: Pixel) => void
-    FLY: (pixel: Pixel) => void
-    CRAWLER2: (pixel: Pixel, onHit?: boolean, afterMove?: boolean) => void
-    CRAWLER: (pixel: Pixel) => void
-    ABSORB: (pixel: Pixel, limit?: number, rate?: number) => void
-    RELEASE_MOISTURE: (pixel: Pixel) => void
-    DO_TICK: (pixel: Pixel) => void
-    SEEDRISE: (pixel: Pixel) => void
+	POWDER_OLD: string[]
+	POWDER: (pixel: Pixel) => void
+	AGPOWDER: string[]
+	LIQUID_OLD: string[]
+	LIQUID: (pixel: Pixel) => void
+	SUPERFLUID_OLD: string[]
+	SUPERFLUID: (pixel: Pixel) => void
+	LIGHTWEIGHT: string[]
+	SLIDE: string[]
+	AGLIQUID: string[]
+	WALL: string[]
+	UL_UR: string[]
+	UL_UR_OPTIMIZED: (pixel: Pixel) => void
+	GAS_OLD: string[]
+	GAS: (pixel: Pixel) => void
+	DGAS_OLD: string
+	DGAS: (pixel: Pixel) => void
+	SUPPORT: string[]
+	SUPPORT_POWDER: string[]
+	DELETE: string[]
+	FILL: string[]
+	CLONER: string[]
+	CLONE_ON_CLICK: (pixel: Pixel, element: string) => void
+	STAIN_ON_MIX: (pixel1: Pixel, pixel2: Pixel) => void
+	STURDYPOWDER_OLD: string[]
+	STURDYPOWDER: (pixel: Pixel) => void
+	SELF_DELETE: string[]
+	FOAM: string[]
+	BUBBLE: string[]
+	STICKY: string[]
+	MOLTEN: (pixel: Pixel) => void
+	MOLTEN_OLD: string[]
+	RADPOWDER: string[]
+	RADMOLTEN: string[]
+	RADLIQUID: string[]
+	BOUNCY: (pixel: Pixel) => void
+	FEEDPIXEL: (pixel: Pixel) => void
+	KILLPIXEL1: (pixel: Pixel) => void
+	KILLPIXEL2: (pixel1: Pixel, pixel2: Pixel) => void
+	FLY: (pixel: Pixel) => void
+	CRAWLER2: (pixel: Pixel, onHit?: boolean, afterMove?: boolean) => void
+	CRAWLER: (pixel: Pixel) => void
+	ABSORB: (pixel: Pixel, limit?: number, rate?: number) => void
+	RELEASE_MOISTURE: (pixel: Pixel) => void
+	DO_TICK: (pixel: Pixel) => void
+	SEEDRISE: (pixel: Pixel) => void
 }
 
 type RenderPresets = (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
 
 declare var renderPresets: {
-    HEATGLOW: RenderPresets
-    WOODCHAR: RenderPresets
-    PLANTCHAR: RenderPresets
-    CHARCOALHEAT: RenderPresets
-    HUESHIFT: RenderPresets
-    MOLTEN: RenderPresets
-    BORDER: RenderPresets
-    LED: RenderPresets
+	HEATGLOW: RenderPresets
+	WOODCHAR: RenderPresets
+	PLANTCHAR: RenderPresets
+	CHARCOALHEAT: RenderPresets
+	HUESHIFT: RenderPresets
+	MOLTEN: RenderPresets
+	BORDER: RenderPresets
+	LED: RenderPresets
 
-    [key: string]: RenderPresets
+	[key: string]: RenderPresets
 }
 
 declare var enabledMods: string[]
@@ -413,14 +414,14 @@ declare var enabledMods: string[]
 declare var defaultCooldown: number
 
 declare var eLists: {
-    ANIMAL: string[]
-    CLEANANIMAL: string[]
-    SEEDS: string[]
-    SOIL: string[]
-    CRAWLTHRU: string[]
-    HIVESPACE: string[]
+	ANIMAL: string[]
+	CLEANANIMAL: string[]
+	SEEDS: string[]
+	SOIL: string[]
+	CRAWLTHRU: string[]
+	HIVESPACE: string[]
 
-    [key: string]: string[]
+	[key: string]: string[]
 }
 
 declare var pixelTicks: number
@@ -430,7 +431,7 @@ declare var isMobile: boolean
 declare var currentPixels: Pixel[]
 
 interface Views {
-    [key: string]: unknown
+	[key: string]: unknown
 }
 
 declare var viewInfo: Record<string, Views>
@@ -447,11 +448,11 @@ declare var interactCoords: [number, number][]
 declare var biCoords: [number, number][]
 
 declare var settings: {
-    [key: string]: unknown
+	[key: string]: unknown
 }
 
 declare var keybinds: {
-    [key: string]: () => unknown
+	[key: string]: () => unknown
 }
 
 declare var shiftDown: number
@@ -463,30 +464,30 @@ declare var view: number
 declare var paused: boolean
 
 declare var btemp: {
-    [key: string]: unknown
+	[key: string]: unknown
 }
 
 declare var textures: {
-    GLASS: string[]
-    BRICK: string[]
+	GLASS: string[]
+	BRICK: string[]
 
-    [key: string]: string[]
+	[key: string]: string[]
 }
 
 type MainCategories =
-    | "tools"
-    | "land"
-    | "liquids"
-    | "life"
-    | "powders"
-    | "solids"
-    | "energy"
-    | "weapons"
-    | "gases"
-    | "food"
-    | "machines"
-    | "special"
-    | "states";
+	| "tools"
+	| "land"
+	| "liquids"
+	| "life"
+	| "powders"
+	| "solids"
+	| "energy"
+	| "weapons"
+	| "gases"
+	| "food"
+	| "machines"
+	| "special"
+	| "states";
 
 type Category = MainCategories | (string & Record<never, never>);
 
@@ -498,117 +499,117 @@ declare var width: number
 declare var pixelSize: number
 
 // Some of these might be wrong
-interface Element {
-    id?: number
-    /** The name of the element */
-    name?: string
-    /** Any aliases for an element (e.g. alcohol is aliased as ethanol ingame) */
-    alias?: string | string[]
-    /** The category an element belongs to */
-    category?: Category
-    /** A description for the element */
-    desc?: string
-    extraInfo?: string
-    related?: string | string[]
-    hidden?: boolean
-    darkText?: boolean
-    canPlace?: boolean
-    nocheer?: boolean
-    forceAutoGen?: boolean
-    /** 
-     * The colour or set of colours for an element. One is randomly selected if there's
-     * an array.
-     */
-    color?: string | string[]
-    colorObject?: { r: number; g: number; b: number }[]
-    colorOn?: string | string[]
-    customColor?: boolean
-    singleColor?: boolean
-    forceSaveColor?: boolean
-    colorPattern?: string[]
-    colorKey?: { [key: string]: string }
-    alpha?: number
-    glow?: boolean
-    firedColors?: { [element: string]: string[] }
-    behavior?: Behavior
-    behaviorOn?: Behavior
-    /** The function to run every tick for a pixel. The pixel is provided as an argument */
-    tick?: ((pixel: Pixel) => void)
-    onClicked?: (pixel: Pixel) => void
-    tick1?: (pixel: Pixel) => void
-    tick2?: (pixel: Pixel) => void
-    tool?: (pixel: Pixel) => void
-    onMouseUp?: () => void
-    onMouseDown?: () => void
-    /** Run when an element is selected. */
-    onSelect?: () => void
-    onUnselect?: () => void
-    onPlace?: (pixel: Pixel) => void
-    onDelete?: (pixel: Pixel) => void
-    onChange?: (pixel: Pixel) => void
-    /** Run when a pixel is mixed. The pixel is provided as an argument. */
-    onMix?: (pixel: Pixel) => void
-    /** Run when a pixel is broken. The pixel is provided as an argument. */
-    onBreak?: (pixel: Pixel) => void
-    perTick?: () => void
-    hoverStat?: (pixel: Pixel) => void
-    renderer?: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
-    reactions?: { [key: string]: ElementReaction }
-    temp?: number
-    tempLow?: number
-    stateLow?: string | (string | null)[]
-    stateLowName?: string
-    stateLowColor?: string
-    stateLowColorMultiplier?: number[] | number
-    /** The temperature at which the element changes to the element provided by `stateHigh` */
-    tempHigh?: number
-    /** The element to change to at `tempHigh` */
-    stateHigh?: string | (string | null)[]
-    stateHighName?: string
-    stateHighColor?: string
-    stateHighColorMultiplier?: number[] | number
-    extraTempLow?: { [temperature: number]: string | string[] }
-    extraTempHigh?: { [temperature: number]: string | string[] }
-    state?: "solid" | "liquid" | "gas"
-    density?: number
-    insulate?: boolean
-    viscosity?: number
-    conduct?: number
-    ignoreConduct?: string[]
-    superconductAt?: number
-    stain?: number
-    stainSelf?: boolean
-    charge?: number
-    movable?: boolean
-    hardness?: number
-    foodNeed?: number
-    properties?: { [key: string]: unknown }
-    maxSize?: number
-    baby?: string
-    egg?: string
-    eggColor?: string | string[]
-    seed?: string | boolean
-    noMix?: boolean
-    ignoreAir?: boolean
-    excludeRandom?: boolean
-    cooldown?: number
-    isFood?: boolean
-    isGas?: boolean
-    ignore?: (string | string[])[]
-    canContain?: boolean
-    burn?: number
-    burning?: boolean
-    burnTime?: number
-    burnInto?: string | string[]
-    extinguish?: boolean
-    fireColor?: string | string[]
-    fireElement?: string
-    rotatable?: boolean
-    flippableX?: boolean
-    flippableY?: boolean
-    /** The element or list of elements to break into. */
-    breakInto?: string | string[]
-    breakIntoColor?: string | string[]
+interface GameElement {
+	id?: number
+	/** The name of the element */
+	name?: string
+	/** Any aliases for an element (e.g. alcohol is aliased as ethanol ingame) */
+	alias?: string | string[]
+	/** The category an element belongs to */
+	category?: Category
+	/** A description for the element */
+	desc?: string
+	extraInfo?: string
+	related?: string | string[]
+	hidden?: boolean
+	darkText?: boolean
+	canPlace?: boolean
+	nocheer?: boolean
+	forceAutoGen?: boolean
+	/**
+	 * The colour or set of colours for an element. One is randomly selected if there's
+	 * an array.
+	 */
+	color?: string | string[]
+	colorObject?: { r: number; g: number; b: number }[]
+	colorOn?: string | string[]
+	customColor?: boolean
+	singleColor?: boolean
+	forceSaveColor?: boolean
+	colorPattern?: string[]
+	colorKey?: { [key: string]: string }
+	alpha?: number
+	glow?: boolean
+	firedColors?: { [element: string]: string[] }
+	behavior?: Behavior
+	behaviorOn?: Behavior
+	/** The function to run every tick for a pixel. The pixel is provided as an argument */
+	tick?: ((pixel: Pixel) => void)
+	onClicked?: (pixel: Pixel) => void
+	tick1?: (pixel: Pixel) => void
+	tick2?: (pixel: Pixel) => void
+	tool?: (pixel: Pixel) => void
+	onMouseUp?: () => void
+	onMouseDown?: () => void
+	/** Run when an element is selected. */
+	onSelect?: () => void
+	onUnselect?: () => void
+	onPlace?: (pixel: Pixel) => void
+	onDelete?: (pixel: Pixel) => void
+	onChange?: (pixel: Pixel) => void
+	/** Run when a pixel is mixed. The pixel is provided as an argument. */
+	onMix?: (pixel: Pixel) => void
+	/** Run when a pixel is broken. The pixel is provided as an argument. */
+	onBreak?: (pixel: Pixel) => void
+	perTick?: () => void
+	hoverStat?: (pixel: Pixel) => void
+	renderer?: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
+	reactions?: { [key: string]: ElementReaction }
+	temp?: number
+	tempLow?: number
+	stateLow?: string | (string | null)[]
+	stateLowName?: string
+	stateLowColor?: string
+	stateLowColorMultiplier?: number[] | number
+	/** The temperature at which the element changes to the element provided by `stateHigh` */
+	tempHigh?: number
+	/** The element to change to at `tempHigh` */
+	stateHigh?: string | (string | null)[]
+	stateHighName?: string
+	stateHighColor?: string
+	stateHighColorMultiplier?: number[] | number
+	extraTempLow?: { [temperature: number]: string | string[] }
+	extraTempHigh?: { [temperature: number]: string | string[] }
+	state?: "solid" | "liquid" | "gas"
+	density?: number
+	insulate?: boolean
+	viscosity?: number
+	conduct?: number
+	ignoreConduct?: string[]
+	superconductAt?: number
+	stain?: number
+	stainSelf?: boolean
+	charge?: number
+	movable?: boolean
+	hardness?: number
+	foodNeed?: number
+	properties?: { [key: string]: unknown }
+	maxSize?: number
+	baby?: string
+	egg?: string
+	eggColor?: string | string[]
+	seed?: string | boolean
+	noMix?: boolean
+	ignoreAir?: boolean
+	excludeRandom?: boolean
+	cooldown?: number
+	isFood?: boolean
+	isGas?: boolean
+	ignore?: (string | string[])[]
+	canContain?: boolean
+	burn?: number
+	burning?: boolean
+	burnTime?: number
+	burnInto?: string | string[]
+	extinguish?: boolean
+	fireColor?: string | string[]
+	fireElement?: string
+	rotatable?: boolean
+	flippableX?: boolean
+	flippableY?: boolean
+	/** The element or list of elements to break into. */
+	breakInto?: string | string[]
+	breakIntoColor?: string | string[]
 
-    [key: string]: unknown;
+	[key: string]: unknown;
 }
