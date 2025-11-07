@@ -345,7 +345,7 @@ interface ElementReaction {
 	func?: ((pixel1: Pixel, pixel2: Pixel) => void)
 }
 
-interface Behaviors: {
+interface Behaviors {
 	POWDER_OLD: Behavior
 	POWDER: (pixel: Pixel) => void
 	AGPOWDER: Behavior
