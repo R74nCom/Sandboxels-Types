@@ -345,42 +345,42 @@ interface ElementReaction {
 	func?: ((pixel1: Pixel, pixel2: Pixel) => void)
 }
 
-declare var behaviors: {
-	POWDER_OLD: string[]
+interface Behaviors: {
+	POWDER_OLD: Behavior
 	POWDER: (pixel: Pixel) => void
-	AGPOWDER: string[]
-	LIQUID_OLD: string[]
+	AGPOWDER: Behavior
+	LIQUID_OLD: Behavior
 	LIQUID: (pixel: Pixel) => void
-	SUPERFLUID_OLD: string[]
+	SUPERFLUID_OLD: Behavior
 	SUPERFLUID: (pixel: Pixel) => void
-	LIGHTWEIGHT: string[]
-	SLIDE: string[]
-	AGLIQUID: string[]
-	WALL: string[]
-	UL_UR: string[]
+	LIGHTWEIGHT: Behavior
+	SLIDE: Behavior
+	AGLIQUID: Behavior
+	WALL: Behavior
+	UL_UR: Behavior
 	UL_UR_OPTIMIZED: (pixel: Pixel) => void
-	GAS_OLD: string[]
+	GAS_OLD: Behavior
 	GAS: (pixel: Pixel) => void
 	DGAS_OLD: string
 	DGAS: (pixel: Pixel) => void
-	SUPPORT: string[]
-	SUPPORT_POWDER: string[]
-	DELETE: string[]
-	FILL: string[]
-	CLONER: string[]
+	SUPPORT: Behavior
+	SUPPORT_POWDER: Behavior
+	DELETE: Behavior
+	FILL: Behavior
+	CLONER: Behavior
 	CLONE_ON_CLICK: (pixel: Pixel, element: string) => void
 	STAIN_ON_MIX: (pixel1: Pixel, pixel2: Pixel) => void
-	STURDYPOWDER_OLD: string[]
+	STURDYPOWDER_OLD: Behavior
 	STURDYPOWDER: (pixel: Pixel) => void
-	SELF_DELETE: string[]
-	FOAM: string[]
-	BUBBLE: string[]
-	STICKY: string[]
+	SELF_DELETE: Behavior
+	FOAM: Behavior
+	BUBBLE: Behavior
+	STICKY: Behavior
 	MOLTEN: (pixel: Pixel) => void
-	MOLTEN_OLD: string[]
-	RADPOWDER: string[]
-	RADMOLTEN: string[]
-	RADLIQUID: string[]
+	MOLTEN_OLD: Behavior
+	RADPOWDER: Behavior
+	RADMOLTEN: Behavior
+	RADLIQUID: Behavior
 	BOUNCY: (pixel: Pixel) => void
 	FEEDPIXEL: (pixel: Pixel) => void
 	KILLPIXEL1: (pixel: Pixel) => void
@@ -393,6 +393,8 @@ declare var behaviors: {
 	DO_TICK: (pixel: Pixel) => void
 	SEEDRISE: (pixel: Pixel) => void
 }
+
+declare let behaviors: Record<string, Behaviors>
 
 type RenderPresets = (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
 
@@ -531,8 +533,8 @@ interface GameElement {
 	alpha?: number
 	glow?: boolean
 	firedColors?: { [element: string]: string[] }
-	behavior?: Behavior
-	behaviorOn?: Behavior
+	behavior?: Behavior | Behaviors
+	behaviorOn?: Behavior | Behaviors
 	/** The function to run every tick for a pixel. The pixel is provided as an argument */
 	tick?: ((pixel: Pixel) => void)
 	onClicked?: (pixel: Pixel) => void
