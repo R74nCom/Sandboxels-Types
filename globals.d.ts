@@ -15,7 +15,7 @@ interface Pixel {
 
     /** Current temperature of the pixel */
     temp: number;
-    /** Starting temperature of the pixel */
+    /** The tick when the pixel was created */
     start: number;
 
     /** Whether the pixel is currently burning */
