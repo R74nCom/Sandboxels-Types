@@ -436,7 +436,7 @@ interface Views {
 
 declare var viewInfo: Record<string, Views>
 
-declare var elements: Record<string, Element>
+declare var elements: Record<string, GameElement>
 
 declare var pixelMap: (Pixel | null)[][]
 
