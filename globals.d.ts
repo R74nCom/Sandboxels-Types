@@ -241,8 +241,8 @@ declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
 declare function addElement(key: string, obj: GameElement): void
 declare function addCanvasLayer(name: string): void
-declare function drawPlus(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
-declare function drawSquare(ctx: CanvasRenderingContext2DSettings, color: string, x: number, y: number, scale?: number, opacity?: number): void
+declare function drawPlus(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, scale?: number, opacity?: number): void
+declare function drawSquare(ctx: CanvasRenderingContext2D, color: string, x: number, y: number, scale?: number, opacity?: number): void
 declare function focusGame(): void
 declare function onAddElement(callback: () => void): void
 declare function outOfSight(x: number, y: number): boolean
@@ -394,7 +394,7 @@ interface Behaviors {
 	SEEDRISE: (pixel: Pixel) => void
 }
 
-declare let behaviors: Record<string, Behaviors>
+declare let behaviors: Behaviors
 
 type RenderPresets = (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
 
@@ -533,8 +533,8 @@ interface GameElement {
 	alpha?: number
 	glow?: boolean
 	firedColors?: { [element: string]: string[] }
-	behavior?: Behavior | Behaviors
-	behaviorOn?: Behavior | Behaviors
+	behavior?: Behavior | ((...args:any[]) => void)
+	behaviorOn?: Behavior | ((...args:any[]) => void)
 	/** The function to run every tick for a pixel. The pixel is provided as an argument */
 	tick?: ((pixel: Pixel) => void)
 	onClicked?: (pixel: Pixel) => void
