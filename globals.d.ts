@@ -311,13 +311,53 @@ declare function RGBToHSL(rgb: [number, number, number]): [number, number, numbe
  */
 declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 
+type CommaString = string | `${string},${CommaString}`
+type HexDigit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" |
+                "A" | "B" | "C" | "D" | "E" | "F" |
+                "a" | "b" | "c" | "d" | "e" | "f";
+type HexColor = `${"#" | ""}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}`;
+type CommaHexString = HexColor | `${HexColor},${CommaHexString}`
+type WithChance<T extends string> = `${T}${`%${number}` | ""}`
+type BehaviorRulesBase = 
+	| `XX`
+	| "M1"
+	| "M2"
+	| "SP"
+	| "SA"
+	| "DL"
+	| "DB"
+	| "CL"
+	| "CF"
+	| `CH:${CommaString}${`>${CommaString}` | ""}`
+	| `C2:${CommaString}`
+	| `CR${`:${CommaString}` | ""}`
+	| `LB:${CommaString}`
+	| `L1:${CommaString}`
+	| `L2:${CommaString}`
+	| `SW:${CommaString}`
+	| `HT${`:${number}` | ""}`
+	| `CO${`:${number}` | ""}`
+	| `CC:${CommaHexString}`
+	| "ST"
+	| `SH${`:${string}` | ""}`
+	| "BO"
+	| `EX:${number}${`>${CommaString}` | ""}`
+
+type CenterBehaviorBase = BehaviorRulesBase
+	| "FX"
+	| "FY"
+	| "RT"
+
+type BehaviorRule = WithChance<BehaviorRulesBase>
+type CenterBehavior = WithChance<CenterBehaviorBase>
+
 /**
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
  */
 type Behavior = [
-	`${string}|${string}|${string}`,
-	`${string}|${string}|${string}`,
-	`${string}|${string}|${string}`
+	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`,
+	`${BehaviorRule}|${CenterBehavior}|${BehaviorRule}`,
+	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`
 ]
 
 interface ElementReaction {
