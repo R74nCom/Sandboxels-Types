@@ -24,14 +24,14 @@ interface Pixel {
 	/** Time when burning started */
 	burnStart?: number;
 
-	/** Charge level of the pixel */
+	/** Charge level of the pixel from 0.0 to 1.0 */
 	charge?: number;
 
-	/** Whether the pixel is flipped horizontally */
+	/** Whether the pixel is flipped horizontally (affects behavior grid) */
 	flipX?: boolean;
-	/** Whether the pixel is flipped vertically */
+	/** Whether the pixel is flipped vertically (affects behavior grid) */
 	flipY?: boolean;
-	/** Rotation of the pixel (radians or degrees depending on context) */
+	/** Rotation of the pixel (either 0, 1, 2 or 3) */
 	r?: number;
 
 	/**
@@ -613,5 +613,9 @@ interface GameElement {
 	breakInto?: string | string[]
 	breakIntoColor?: string | string[]
 
+	/**
+	 * Any additional custom properties.
+	 * Allows element data storage for mods.
+	 */
 	[key: string]: unknown;
 }
