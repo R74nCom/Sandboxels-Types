@@ -497,6 +497,8 @@ declare var keybinds: {
 	[key: string]: () => unknown
 }
 
+declare var mouseIsDown: boolean
+
 declare var shiftDown: number
 
 declare var tps: number
