@@ -499,6 +499,10 @@ declare var keybinds: {
 
 declare var mouseIsDown: boolean
 
+declare var mouseType: "left" | "middle" | "right" | null
+
+declare var currentElement: string
+
 declare var shiftDown: number
 
 declare var tps: number
