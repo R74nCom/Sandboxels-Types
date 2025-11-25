@@ -209,15 +209,15 @@ declare function promptChoose(text: string, choices: string[], handler: (value: 
  * @param title - The title for the prompt
  * @param defaultInput - The default value for the textbox
  */
-declare function promptDir(text: string, handler: (value: 0|1|2|3) => void, title?: string): void
+declare function promptDir(text: string, handler: (value: 0 | 1 | 2 | 3) => void, title?: string): void
 declare function runEveryTick(callback: () => void): void
 declare function runAfterLoad(callback: () => void): void
 declare function runAfterAutogen(callback: () => void): void
-declare function runPerPixel(callback: () => void): void
+declare function runPerPixel(callback: (pixel: Pixel) => void): void
 declare function runAfterReset(callback: () => void): void
-declare function renderEachPixel(callback: () => void): void
-declare function renderPostPixel(callback: () => void): void
-declare function renderPrePixel(callback: () => void): void
+declare function renderEachPixel(callback: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void): void
+declare function renderPostPixel(callback: (ctx: CanvasRenderingContext2D) => void): void
+declare function renderPrePixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
 declare function clearLog(): void
 declare function doDefaults(pixel: Pixel): void
@@ -263,6 +263,7 @@ declare function toggleShift(): void
 declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
+declare function canvasCoord(n: number): number
 
 // --- Non game specific utilities
 
@@ -311,54 +312,10 @@ declare function RGBToHSL(rgb: [number, number, number]): [number, number, numbe
  */
 declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 
-type CommaString = string | `${string},${CommaString}`
-type HexDigit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" |
-                "A" | "B" | "C" | "D" | "E" | "F" |
-                "a" | "b" | "c" | "d" | "e" | "f";
-type HexColor = `${"#" | ""}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}`;
-type CommaHexString = HexColor | `${HexColor},${CommaHexString}`
-type WithChance<T extends string> = `${T}${`%${number}` | ""}`
-type BehaviorRulesBase = 
-	| `XX`
-	| "M1"
-	| "M2"
-	| "SP"
-	| "SA"
-	| "DL"
-	| "DB"
-	| "CL"
-	| "CF"
-	| `CH:${CommaString}${`>${CommaString}` | ""}`
-	| `C2:${CommaString}`
-	| `CR${`:${CommaString}` | ""}`
-	| `LB:${CommaString}`
-	| `L1:${CommaString}`
-	| `L2:${CommaString}`
-	| `SW:${CommaString}`
-	| `HT${`:${number}` | ""}`
-	| `CO${`:${number}` | ""}`
-	| `CC:${CommaHexString}`
-	| "ST"
-	| `SH${`:${string}` | ""}`
-	| "BO"
-	| `EX:${number}${`>${CommaString}` | ""}`
-
-type CenterBehaviorBase = BehaviorRulesBase
-	| "FX"
-	| "FY"
-	| "RT"
-
-type BehaviorRule = WithChance<BehaviorRulesBase>
-type CenterBehavior = WithChance<CenterBehaviorBase>
-
 /**
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
  */
-type Behavior = [
-	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`,
-	`${BehaviorRule}|${CenterBehavior}|${BehaviorRule}`,
-	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`
-]
+type Behavior = string[] | string[][]
 
 interface ElementReaction {
 	elem1?: string | null | (string | null)[]
@@ -489,6 +446,20 @@ declare var adjacentCoordsShuffle: [number, number][]
 declare var interactCoords: [number, number][]
 declare var biCoords: [number, number][]
 
+declare var mousePos: { "x": number, "y": number }
+declare let mouseSize: number
+declare let canvas: HTMLElement
+
+declare var canvasLayers: {
+	pixels: HTMLCanvasElement
+	gui: HTMLCanvasElement
+
+	[key: string]: HTMLCanvasElement
+}
+
+declare let canvasLayersPre: HTMLCanvasElement[]
+declare let canvasLayersPost: HTMLCanvasElement[]
+
 declare var settings: {
 	[key: string]: unknown
 }
@@ -497,13 +468,13 @@ declare var keybinds: {
 	[key: string]: () => unknown
 }
 
-declare var mouseIsDown: boolean
-
-declare var mouseType: "left" | "middle" | "right" | null
-
-declare var currentElement: string
-
 declare var shiftDown: number
+declare var shaping: number
+declare var shapeStart: { "x": number, "y": number } | null
+declare var placingImage: HTMLImageElement | null
+declare var dragStart: number | null
+declare var pixelSizeHalf: number
+declare var ctx: CanvasRenderingContext2D | null
 
 declare var tps: number
 
@@ -579,8 +550,8 @@ interface GameElement {
 	alpha?: number
 	glow?: boolean
 	firedColors?: { [element: string]: string[] }
-	behavior?: Behavior | ((...args:any[]) => void)
-	behaviorOn?: Behavior | ((...args:any[]) => void)
+	behavior?: Behavior | ((...args: any[]) => void)
+	behaviorOn?: Behavior | ((...args: any[]) => void)
 	/** The function to run every tick for a pixel. The pixel is provided as an argument */
 	tick?: ((pixel: Pixel) => void)
 	onClicked?: (pixel: Pixel) => void
@@ -609,7 +580,7 @@ interface GameElement {
 	stateLowName?: string
 	stateLowColor?: string
 	stateLowColorMultiplier?: number[] | number
-	/** The temperature at which the element changes to the element provided by `stateHigh` or if there isnt a `stateHigh` make an autogenerated element*/
+	/** The temperature at which the element changes to the element provided by `stateHigh` */
 	tempHigh?: number
 	/** The element to change to at `tempHigh` */
 	stateHigh?: string | null | (string | null)[]
