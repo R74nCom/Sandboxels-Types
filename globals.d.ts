@@ -438,7 +438,7 @@ declare let behaviors: Behaviors
 
 type RenderPresets = (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
 
-declare var renderPresets: {
+declare let renderPresets: {
 	HEATGLOW: RenderPresets
 	WOODCHAR: RenderPresets
 	PLANTCHAR: RenderPresets
@@ -451,11 +451,11 @@ declare var renderPresets: {
 	[key: string]: RenderPresets
 }
 
-declare var enabledMods: string[]
+declare let enabledMods: string[]
 
-declare var defaultCooldown: number
+declare let defaultCooldown: number
 
-declare var eLists: {
+declare const eLists: {
 	ANIMAL: string[]
 	CLEANANIMAL: string[]
 	SEEDS: string[]
@@ -466,50 +466,50 @@ declare var eLists: {
 	[key: string]: string[]
 }
 
-declare var pixelTicks: number
+declare let pixelTicks: number
 
-declare var isMobile: boolean
+declare let isMobile: boolean
 
-declare var currentPixels: Pixel[]
+declare let currentPixels: Pixel[]
 
 interface Views {
 	[key: string]: unknown
 }
 
-declare var viewInfo: Record<string, Views>
+declare let viewInfo: Record<string, Views>
 
-declare var elements: Record<string, GameElement>
+declare let elements: Record<string, GameElement>
 
-declare var pixelMap: (Pixel | null)[][]
+declare let pixelMap: (Pixel | null)[][]
 
-declare var squareCoords: [number, number][]
-declare var adjacentCoords: [number, number][]
-declare var squareCoordsShuffle: [number, number][]
-declare var adjacentCoordsShuffle: [number, number][]
-declare var interactCoords: [number, number][]
-declare var biCoords: [number, number][]
+declare const squareCoords: [number, number][]
+declare const adjacentCoords: [number, number][]
+declare const squareCoordsShuffle: [number, number][]
+declare const adjacentCoordsShuffle: [number, number][]
+declare const interactCoords: [number, number][]
+declare const biCoords: [number, number][]
 
-declare var settings: {
+declare let settings: {
 	[key: string]: unknown
 }
 
-declare var keybinds: {
+declare let keybinds: {
 	[key: string]: () => unknown
 }
 
-declare var shiftDown: number
+declare let shiftDown: number
 
-declare var tps: number
+declare let tps: number
 
-declare var view: number
+declare let view: number
 
-declare var paused: boolean
+declare let paused: boolean
 
-declare var btemp: {
+declare let btemp: {
 	[key: string]: unknown
 }
 
-declare var textures: {
+declare let textures: {
 	GLASS: string[]
 	BRICK: string[]
 
@@ -534,11 +534,11 @@ type MainCategories =
 type Category = MainCategories | (string & Record<never, never>);
 
 /** The height of the canvas in pixels */
-declare var height: number
+declare let height: number
 /** The width of the canvas in pixels */
-declare var width: number
+declare let width: number
 /** The size of each pixel (on the canvas) in pixels on the canvas */
-declare var pixelSize: number
+declare let pixelSize: number
 
 // Some of these might be wrong
 interface GameElement {
