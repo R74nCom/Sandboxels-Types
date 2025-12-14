@@ -162,7 +162,7 @@ declare function movePixel(pixel: Pixel, x: number, y: number, leaveBehind?: boo
  * @param handler - The callback to run after the ok button is pressed.
  * @param title - The title for the prompt.
  */
-declare function promptText(text: string, handler: Function, title?: string): void
+declare function promptText(text: string, handler: () => void, title?: string): void
 /**
  * Show a prompt with confirm/cancel buttons
  *
