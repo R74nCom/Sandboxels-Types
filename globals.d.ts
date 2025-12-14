@@ -1,4 +1,3 @@
-
 /**
  * Represents a single pixel in the game.
  */
@@ -210,14 +209,20 @@ declare function promptChoose(text: string, choices: string[], handler: (value: 
  * @param defaultInput - The default value for the textbox
  */
 declare function promptDir(text: string, handler: (value: 0|1|2|3) => void, title?: string): void
+
+/** Run a calback every tick */
 declare function runEveryTick(callback: () => void): void
+/** Run a callback after the game loads. */
 declare function runAfterLoad(callback: () => void): void
 declare function runAfterAutogen(callback: () => void): void
 declare function runPerPixel(callback: () => void): void
+/** Run after the canvas is reset. */
 declare function runAfterReset(callback: () => void): void
+
 declare function renderEachPixel(callback: () => void): void
 declare function renderPostPixel(callback: () => void): void
 declare function renderPrePixel(callback: () => void): void
+
 declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
 declare function clearLog(): void
 declare function doDefaults(pixel: Pixel): void
@@ -315,8 +320,11 @@ type CommaString = string | `${string},${CommaString}`
 type HexDigit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" |
                 "A" | "B" | "C" | "D" | "E" | "F" |
                 "a" | "b" | "c" | "d" | "e" | "f";
+
+/** A hexadecimal colour */
 type HexColor = `${"#" | ""}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}`;
 type CommaHexString = HexColor | `${HexColor},${CommaHexString}`
+
 type WithChance<T extends string> = `${T}${`%${number}` | ""}`
 type BehaviorRulesBase = 
 	| `XX`
@@ -568,7 +576,7 @@ interface GameElement {
 	 * The colour or set of colours for an element. One is randomly selected if there's
 	 * an array.
 	 */
-	color?: string | string[]
+	color?: HexColor | HexColor[]
 	colorObject?: { r: number; g: number; b: number }[]
 	colorOn?: string | string[]
 	customColor?: boolean
@@ -622,7 +630,7 @@ interface GameElement {
      */
 	stateLowName?: string
     /** The colour (s) to set to {@link stateLow} after freezing. */
-	stateLowColor?: string | string[]
+	stateLowColor?: HexColor | HexColor[]
     /** The multiplier to the default colours for {@link stateLow} after freezing. */
 	stateLowColorMultiplier?: number[] | number
 
@@ -676,14 +684,14 @@ interface GameElement {
     /** The maximum size for the cursor when placing an element. */
 	maxSize?: number
 
-    /** How much food a pixel needs to eat before laying. Defaults to 30.*/
+    /** How much food a pixel needs to eat before laying an egg based on {@link egg}. Defaults to 30.*/
     foodNeed?: number
     /** The element eggs hatch into. Ignored if {@link egg} is set. */
 	baby?: string
     /** The type of egg a pixel lays. */
 	egg?: string
-    /** The colour of eggs laid */
-	eggColor?: string | string[]
+    /** The colour of eggs to lay. */
+	eggColor?: HexColor | HexColor[]
 
     /** Whether an element is food or not */
     isFood?: boolean
@@ -699,8 +707,8 @@ interface GameElement {
 	canContain?: boolean
 	extinguish?: boolean
 
-    /** The colour of fire to burn with */
-	fireColor?: string | string[]
+    /** The colour(s) of fire to burn with */
+	fireColor?: HexColor | HexColor[]
     /** The element(s) to burn into. */
     burnInto?: string | string[]
     /** The amount of time to burn for */
@@ -720,7 +728,7 @@ interface GameElement {
 	/** The element or list of elements to break into. */
 	breakInto?: string | string[]
     /** The colour(s) to set on the elements to break into */
-	breakIntoColor?: string | string[]
+	breakIntoColor?: HexColor | HexColor[]
 
 	/**
 	 * Any additional custom properties.
