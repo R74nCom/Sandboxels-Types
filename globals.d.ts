@@ -208,20 +208,20 @@ declare function promptChoose(text: string, choices: string[], handler: (value: 
  * @param title - The title for the prompt
  * @param defaultInput - The default value for the textbox
  */
-declare function promptDir(text: string, handler: (value: 0|1|2|3) => void, title?: string): void
+declare function promptDir(text: string, handler: (value: 0 | 1 | 2 | 3) => void, title?: string): void
 
 /** Run a calback every tick */
 declare function runEveryTick(callback: () => void): void
 /** Run a callback after the game loads. */
 declare function runAfterLoad(callback: () => void): void
 declare function runAfterAutogen(callback: () => void): void
-declare function runPerPixel(callback: () => void): void
+declare function runPerPixel(callback: (pixel: Pixel) => void): void
 /** Run after the canvas is reset. */
 declare function runAfterReset(callback: () => void): void
 
-declare function renderEachPixel(callback: () => void): void
-declare function renderPostPixel(callback: () => void): void
-declare function renderPrePixel(callback: () => void): void
+declare function renderEachPixel(callback: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void): void
+declare function renderPostPixel(callback: (ctx: CanvasRenderingContext2D) => void): void
+declare function renderPrePixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 
 declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
 declare function clearLog(): void
@@ -268,6 +268,7 @@ declare function toggleShift(): void
 declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
+declare function canvasCoord(n: number): number
 
 // --- Non game specific utilities
 
@@ -362,11 +363,7 @@ type CenterBehavior = WithChance<CenterBehaviorBase>
 /**
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
  */
-type Behavior = [
-	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`,
-	`${BehaviorRule}|${CenterBehavior}|${BehaviorRule}`,
-	`${BehaviorRule}|${BehaviorRule}|${BehaviorRule}`
-]
+type Behavior = string[] | string[][]
 
 interface ElementReaction {
 	elem1?: string | null | (string | null)[]
@@ -497,6 +494,20 @@ declare const adjacentCoordsShuffle: [number, number][]
 declare const interactCoords: [number, number][]
 declare const biCoords: [number, number][]
 
+declare var mousePos: { "x": number, "y": number }
+declare let mouseSize: number
+declare let canvas: HTMLElement
+
+declare var canvasLayers: {
+	pixels: HTMLCanvasElement
+	gui: HTMLCanvasElement
+
+	[key: string]: HTMLCanvasElement
+}
+
+declare let canvasLayersPre: HTMLCanvasElement[]
+declare let canvasLayersPost: HTMLCanvasElement[]
+
 declare let settings: {
 	[key: string]: unknown
 }
@@ -505,7 +516,13 @@ declare let keybinds: {
 	[key: string]: () => unknown
 }
 
-declare let shiftDown: number
+declare var shiftDown: number
+declare var shaping: number
+declare var shapeStart: { "x": number, "y": number } | null
+declare var placingImage: HTMLImageElement | null
+declare var dragStart: number | null
+declare var pixelSizeHalf: number
+declare var ctx: CanvasRenderingContext2D | null
 
 declare let tps: number
 
@@ -587,8 +604,8 @@ interface GameElement {
 	alpha?: number
 	glow?: boolean
 	firedColors?: { [element: string]: string[] }
-	behavior?: Behavior | ((...args:any[]) => void)
-	behaviorOn?: Behavior | ((...args:any[]) => void)
+	behavior?: Behavior | ((...args: any[]) => void)
+	behaviorOn?: Behavior | ((...args: any[]) => void)
 	/** The function to run every tick for a pixel. The pixel is provided as an argument */
 	tick?: ((pixel: Pixel) => void)
 	onClicked?: (pixel: Pixel) => void
