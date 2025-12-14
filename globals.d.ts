@@ -494,11 +494,11 @@ declare const adjacentCoordsShuffle: [number, number][]
 declare const interactCoords: [number, number][]
 declare const biCoords: [number, number][]
 
-declare var mousePos: { "x": number, "y": number }
+declare let mousePos: { "x": number, "y": number }
 declare let mouseSize: number
 declare let canvas: HTMLElement
 
-declare var canvasLayers: {
+declare let canvasLayers: {
 	pixels: HTMLCanvasElement
 	gui: HTMLCanvasElement
 
@@ -516,13 +516,14 @@ declare let keybinds: {
 	[key: string]: () => unknown
 }
 
-declare var shiftDown: number
-declare var shaping: number
-declare var shapeStart: { "x": number, "y": number } | null
-declare var placingImage: HTMLImageElement | null
-declare var dragStart: number | null
-declare var pixelSizeHalf: number
-declare var ctx: CanvasRenderingContext2D | null
+declare let shiftDown: number
+declare let shaping: number
+declare let shapeStart: { "x": number, "y": number } | null
+declare let placingImage: HTMLImageElement | null
+declare let dragStart: number | null
+declare let pixelSizeHalf: number
+/** The context */
+declare let ctx: CanvasRenderingContext2D | null
 
 declare let tps: number
 
