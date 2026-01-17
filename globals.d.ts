@@ -269,6 +269,75 @@ declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function canvasCoord(n: number): number
+declare function saveToFile(): void
+declare function confirmSave(): void
+
+let editingPixels: unknown[]
+let mouseIsDown: boolean
+let editMode: boolean
+let showingMenu: string
+/** The {@link setInterval} ID for the logger */
+let logInterval: number | null
+declare function setView(view: number): void
+declare function toggleEditMode(): void
+
+/** The current state of the prompt */
+declare let promptState: {
+    /** The type of the current prompt */
+    type: "confirm" | "choose" | "dir" | "text"
+    /** The prompt title */
+    title: string
+    /** The text in the prompt */
+    text: string
+    /** The list of choices (only applies for choose prompts) */
+    choices?: string[]
+    /** The handler to call when the prompt is confirmed */
+    handler: (data: unknown) => void
+
+    /** Whether the game was paused before the prompt */
+    paused: boolean
+    after: () => void
+} | null
+
+/** 
+ * Close the currently open menu.
+ * 
+ * @param nextMenu 
+ * If this is set to prompt and the current menu is also prompt, it prevents the prompt element from
+ * being hidden in betwen
+ */
+declare function closeMenu(nextMenu: string): void
+/**
+ * Shows information about an element
+ * 
+ * @param element The element to show information about
+ * @param back
+ */
+declare function showInfo(element: string, back: string[] | boolean = false): void
+/**
+ * Runs the prompt handler in {@link promptState} and does cleanup
+ * 
+ * @remarks
+ * 
+ * The function
+ * 
+ * 1. Unpauses the game
+ * 2. Hides the prompt
+ * 3. Sets {@link promptState} to null
+ * 4. Runs {@link promptState.handler} if defined
+ * 5. Runs {@link promptState.after} if defined
+ * 
+ * in order. {@link promptState.handler} and {@link promptState.after} are preserved before {@link promptState}
+ * is nulled.
+ * 
+ * @param result The value to pass to the handler
+ */
+declare function handlePrompt(result: unknown): void
+
+/** Prompts to load from a file */
+declare function loadFromFile(): void
+/** The data from the previous save loaded with {@link loadFromFile} */
+let lastSaveJSON: Record<string, unknown>
 
 // --- Non game specific utilities
 
