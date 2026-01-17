@@ -276,9 +276,16 @@ let editingPixels: unknown[]
 let mouseIsDown: boolean
 let editMode: boolean
 let showingMenu: string
+
 /** The {@link setInterval} ID for the logger */
 let logInterval: number | null
+/** 
+ * Set the current view
+ * 
+ * @param view The view index to set to
+ */
 declare function setView(view: number): void
+/** Toggles edit mode */
 declare function toggleEditMode(): void
 
 /** The current state of the prompt */
