@@ -671,6 +671,11 @@ interface GameElement {
 	 * an array.
 	 */
 	color?: HexColor | HexColor[]
+	/**
+	 * Overrides the color displayed on the button
+	 * Button color uses color unless this is defined
+	*/
+	buttonColor?: HexColor | HexColor[]
 	colorObject?: { r: number; g: number; b: number }[]
 	colorOn?: string | string[]
 	customColor?: boolean
