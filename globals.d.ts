@@ -589,7 +589,7 @@ declare let settings: {
 }
 
 declare let keybinds: {
-	[key: string]: () => unknown
+	[key: string]: (ev: KeyboardEvent) => unknown
 }
 
 declare let shiftDown: number
