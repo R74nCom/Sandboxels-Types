@@ -223,17 +223,23 @@ declare function renderEachPixel(callback: (pixel: Pixel, ctx: CanvasRenderingCo
 declare function renderPostPixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 declare function renderPrePixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 
-declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
-declare function clearLog(): void
 declare function doDefaults(pixel: Pixel): void
 declare function doBurning(pixel: Pixel): void
 declare function doHeat(pixel: Pixel): void
 declare function doElectricity(pixel: Pixel, step: number): void
 declare function doStaining(pixel: Pixel): void
 declare function doAirDensity(pixel: Pixel): void
-declare function pixelColorPick(pixel: Pixel, customColor?: null | string | string[]): string
+
 declare function tryCreate(element: string | string[], x: number, y: number, replace?: boolean): void
 declare function tryDelete(x: number, y: number): object | null
+
+declare function onBorder(x: number, y: number): boolean
+declare function onBorderX(x: number): boolean
+declare function onBorderY(y: number): boolean
+
+declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
+declare function clearLog(): void
+declare function pixelColorPick(pixel: Pixel, customColor?: null | string | string[]): string
 declare function modIsEnabled(modName: string): boolean
 declare function tpsPrompt(): void
 declare function explodeAt(x: number, y: number, radius: number, fire: string): void
@@ -251,9 +257,6 @@ declare function drawSquare(ctx: CanvasRenderingContext2D, color: string, x: num
 declare function focusGame(): void
 declare function onAddElement(callback: () => void): void
 declare function outOfSight(x: number, y: number): boolean
-declare function onBorder(x: number, y: number): boolean
-declare function onBorderX(x: number): boolean
-declare function onBorderY(y: number): boolean
 declare function pixelTick(pixel: Pixel, custom?: unknown): void
 declare function reactPixels(pixel1: Pixel, pixel2: Pixel): void
 declare function rectCoords(x1: number, y1: number, x2: number, y2: number): object[]
@@ -269,6 +272,7 @@ declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function canvasCoord(n: number): number
+
 declare function saveToFile(): void
 declare function confirmSave(): void
 
