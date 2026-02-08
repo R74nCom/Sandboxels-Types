@@ -285,6 +285,13 @@ declare function confirmSave(): void
  */
 declare function getMousePos(canvas: HTMLCanvasElement, evt: TouchEvent): { x: number, y: number }
 
+/**
+ * Handles scrolling
+ * 
+ * @param e The event to handle
+ */
+declare function wheelHandle(e: WheelEvent)
+
 let editingPixels: unknown[]
 let mouseIsDown: boolean
 let editMode: boolean
