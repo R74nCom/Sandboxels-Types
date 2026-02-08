@@ -272,6 +272,15 @@ declare function canvasCoord(n: number): number
 declare function saveToFile(): void
 declare function confirmSave(): void
 
+/** 
+ * Gets the new position of the cursor, based on an event
+ * 
+ * @param canvas The canvas to get the position on
+ * @param event The event to get the position based on
+ * @returns The new position of the cursor, in pixel coordinates
+ */
+declare function getMousePos(canvas: HTMLCanvasElement, evt: TouchEvent): { x: number, y: number }
+
 let editingPixels: unknown[]
 let mouseIsDown: boolean
 let editMode: boolean
