@@ -86,14 +86,14 @@ declare class SelectSetting<T> extends Setting<T> {
      * 
      * @param name The name for the setting.
      * @param storageName The name of the setting in localStorage.
-     * @param values The values to have. Each pair is in the form of `[<text>, <value>]`.
+     * @param values The values to have. Each pair is in the form of `[<value>, <text>]`.
      * @param [defaultValue=null] The default value to have.
      * @param [disabled=false] Whether to disable the setting or not.
      */
     constructor(
         name: string, 
         storageName: string, 
-        values: [string, T][], 
+        values: [T, string][], 
         disabled: boolean = false, 
         defaultValue: T | null = null
     )
