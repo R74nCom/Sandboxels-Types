@@ -79,6 +79,26 @@ declare class Setting<V = string | number | boolean | never[]> {
     build(): HTMLElement;
 }
 
+/** The type for a dropdown menu */
+declare class SelectSetting<T> extends Setting<T> {
+    /**
+     * The constructor.
+     * 
+     * @param name The name for the setting.
+     * @param storageName The name of the setting in localStorage.
+     * @param values The values to have. Each pair is in the form of `[<text>, <value>]`.
+     * @param [defaultValue=null] The default value to have.
+     * @param [disabled=false] Whether to disable the setting or not.
+     */
+    constructor(
+        name: string, 
+        storageName: string, 
+        values: [string, T][], 
+        disabled: boolean = false, 
+        defaultValue: T | null = null
+    )
+}
+
 class SettingsTab {
     /**
      * The constructor.
