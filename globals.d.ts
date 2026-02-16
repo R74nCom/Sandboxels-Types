@@ -223,23 +223,17 @@ declare function renderEachPixel(callback: (pixel: Pixel, ctx: CanvasRenderingCo
 declare function renderPostPixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 declare function renderPrePixel(callback: (ctx: CanvasRenderingContext2D) => void): void
 
+declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
+declare function clearLog(): void
 declare function doDefaults(pixel: Pixel): void
 declare function doBurning(pixel: Pixel): void
 declare function doHeat(pixel: Pixel): void
 declare function doElectricity(pixel: Pixel, step: number): void
 declare function doStaining(pixel: Pixel): void
 declare function doAirDensity(pixel: Pixel): void
-
+declare function pixelColorPick(pixel: Pixel, customColor?: null | string | string[]): string
 declare function tryCreate(element: string | string[], x: number, y: number, replace?: boolean): void
 declare function tryDelete(x: number, y: number): object | null
-
-declare function onBorder(x: number, y: number): boolean
-declare function onBorderX(x: number): boolean
-declare function onBorderY(y: number): boolean
-
-declare function dependOn(modName: string, callback: () => void, forceLoad?: boolean): void
-declare function clearLog(): void
-declare function pixelColorPick(pixel: Pixel, customColor?: null | string | string[]): string
 declare function modIsEnabled(modName: string): boolean
 declare function tpsPrompt(): void
 declare function explodeAt(x: number, y: number, radius: number, fire: string): void
@@ -257,6 +251,9 @@ declare function drawSquare(ctx: CanvasRenderingContext2D, color: string, x: num
 declare function focusGame(): void
 declare function onAddElement(callback: () => void): void
 declare function outOfSight(x: number, y: number): boolean
+declare function onBorder(x: number, y: number): boolean
+declare function onBorderX(x: number): boolean
+declare function onBorderY(y: number): boolean
 declare function pixelTick(pixel: Pixel, custom?: unknown): void
 declare function reactPixels(pixel1: Pixel, pixel2: Pixel): void
 declare function rectCoords(x1: number, y1: number, x2: number, y2: number): object[]
@@ -272,99 +269,6 @@ declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function canvasCoord(n: number): number
-
-declare function saveToFile(): void
-declare function confirmSave(): void
-
-/** 
- * Gets the new position of the cursor, based on an event
- * 
- * @param canvas The canvas to get the position on
- * @param event The event to get the position based on
- * @returns The new position of the cursor, in pixel coordinates
- */
-declare function getMousePos(canvas: HTMLCanvasElement, evt: TouchEvent): { x: number, y: number }
-
-/**
- * Handles scrolling
- * 
- * @param e The event to handle
- */
-declare function wheelHandle(e: WheelEvent)
-
-let editingPixels: unknown[]
-let mouseIsDown: boolean
-let editMode: boolean
-let showingMenu: string
-
-/** The {@link setInterval} ID for the logger */
-let logInterval: number | null
-/** 
- * Set the current view
- * 
- * @param view The view index to set to
- */
-declare function setView(view: number): void
-/** Toggles edit mode */
-declare function toggleEditMode(): void
-
-/** The current state of the prompt */
-declare let promptState: {
-    /** The type of the current prompt */
-    type: "confirm" | "choose" | "dir" | "text"
-    /** The prompt title */
-    title: string
-    /** The text in the prompt */
-    text: string
-    /** The list of choices (only applies for choose prompts) */
-    choices?: string[]
-    /** The handler to call when the prompt is confirmed */
-    handler: (data: unknown) => void
-
-    /** Whether the game was paused before the prompt */
-    paused: boolean
-    after: () => void
-} | null
-
-/** 
- * Close the currently open menu.
- * 
- * @param nextMenu 
- * If this is set to prompt and the current menu is also prompt, it prevents the prompt element from
- * being hidden in betwen
- */
-declare function closeMenu(nextMenu: string): void
-/**
- * Shows information about an element
- * 
- * @param element The element to show information about
- * @param back
- */
-declare function showInfo(element: string, back: string[] | boolean = false): void
-/**
- * Runs the prompt handler in {@link promptState} and does cleanup
- * 
- * @remarks
- * 
- * The function
- * 
- * 1. Unpauses the game
- * 2. Hides the prompt
- * 3. Sets {@link promptState} to null
- * 4. Runs {@link promptState.handler} if defined
- * 5. Runs {@link promptState.after} if defined
- * 
- * in order. {@link promptState.handler} and {@link promptState.after} are preserved before {@link promptState}
- * is nulled.
- * 
- * @param result The value to pass to the handler
- */
-declare function handlePrompt(result: unknown): void
-
-/** Prompts to load from a file */
-declare function loadFromFile(): void
-/** The data from the previous save loaded with {@link loadFromFile} */
-let lastSaveJSON: Record<string, unknown>
 
 // --- Non game specific utilities
 
@@ -609,7 +513,7 @@ declare let settings: {
 }
 
 declare let keybinds: {
-	[key: string]: (ev: KeyboardEvent) => unknown
+	[key: string]: () => unknown
 }
 
 declare let shiftDown: number
@@ -619,7 +523,7 @@ declare let placingImage: HTMLImageElement | null
 declare let dragStart: number | null
 declare let pixelSizeHalf: number
 /** The context */
-declare let ctx: CanvasRenderingContext2D | null
+declare let issues: CanvasRenderingContext2D | null
 
 declare let tps: number
 
@@ -691,11 +595,6 @@ interface GameElement {
 	 * an array.
 	 */
 	color?: HexColor | HexColor[]
-	/**
-	 * Overrides the color displayed on the button
-	 * Button color uses color unless this is defined
-	*/
-	buttonColor?: HexColor | HexColor[]
 	colorObject?: { r: number; g: number; b: number }[]
 	colorOn?: string | string[]
 	customColor?: boolean
@@ -855,3 +754,142 @@ interface GameElement {
 	 */
 	[key: string]: unknown;
 }
+
+/** An element saved in the raw data format */
+type SavedElement = Pick<GameElement, "color" | "element"> & Record<string, unknown>
+
+/** The game version as stored in saves */
+type GameVersion = `${number}.${number}.${number}`
+
+/** Metadata about a save */
+type SaveMetadata = {
+    /** The name of the save */
+    name: string,
+    /** The description of the save */
+    desc: string,
+    /** The author of the save */
+    author: string,
+
+    /** The save format version the save was created with */
+    saveVersion: `sb${number}`,
+    /** The game version the save was created with */
+    gameVersion: GameVersion,
+
+    /** The timestamp of when the save was created */
+    created: number,
+    /** The timestamp of when the save was updated */
+    updated: number,
+    /** The UUID of the save */
+    uuid: string,
+    /** The index of the save in a series */
+    seriesIndex: 0,
+    /** The UUID for the save's series */
+    seriesID: string,
+
+    /** The URL of the page where the save was created */
+    url: string,
+    /** Any tags assigned to the save */
+    tags: unknown[]
+}
+
+/** A save's configuration */
+type SaveConfig = {
+    /** All settings bundled with the save */
+    settings: Record<string, unknown>,
+    /** All mods bundled with the save */
+    mods: string[],
+    /** The elapsed pixel ticks */
+    pixelTicks: number,
+    /** The height of the save */
+    height: number,
+    /** The width of the save */
+    width: number,
+    /** The {@link pixelSize} for a save */
+    pixelSize: number,
+
+    /** The previous setting for TPS */
+    tps: number,
+    /** The element selected at the time of the save's creation */
+    currentElement: string,
+    /** The mode selected when the save was created */
+    view: number,
+    /** Whether the game was paused when the save was created */
+    paused: boolean,
+    /** The size of the cursor when the save was created */
+    mouseSize: number,
+    border: 0
+}
+
+/** A save created with raw data included */
+type RawDataSave = {
+    /** Metadata about the save */
+    meta: SaveMetadata,
+    /** The configuration of the save */
+    saveConfig: SaveConfig,
+    /** The codes used with the save */
+    codes: Record<string, never>,
+    /** The save's pixelmap */
+    pixelMap: (SavedElement | 0)[][],
+    /** Information about grouping */
+    relations: {
+        _id: number,
+        [item: number]: {lastMove: number}
+    }
+}
+
+type NormalSave = {
+    /** Metadata about the save */
+    meta: SaveMetadata,
+    /** The configuration of the save */
+    saveConfig: SaveConfig,
+    /** The codes used with the save */
+    codes: Record<string, string>,
+    /** The save's pixelmap */
+    pixelMap: string
+    /** Information about grouping */
+    relations: {
+        _id: number,
+        [item: number]: {lastMove: number}
+    }
+}
+
+/**
+ * Generates a save
+ * 
+ * @param pixelMap The pixelmap to generate from. Uses the canvas if not specified.
+ * @param options The options to generate with. Defaults to `{}`.
+ * @param options.raw If true, doesn't compress the pixelmap.
+ * 
+ * @param options.mods  
+ * If not false, `mods` is set to {@link enabledMods}. Otherwise, `mods` is set to `[]`
+ * 
+ * @param options.settings 
+ * If not false, `settings` is set to all the items in {@link settings},
+ * except for those in {@link vitalSettings}
+ * 
+ * @param options.name The name to assign to the save
+ * @param options.desc The description to assign to the save
+ * @param options.author The author to assign to the save
+ * @param options.tags Any tags to assign to the save
+ * 
+ * @param options.keep
+ * A custom list of properties to keep. Overrides the list in {@link basicProperties}.
+ * 
+ * @returns
+ * The generated save. {@link NormalSave} if `raw` is `false` and {@link RawDataSave} otherwise
+ */
+declare function generateSave(
+    pixelMap?: Pixel[][],
+    options?: {
+        raw?: true
+        mods?: boolean
+        settings?: boolean
+        name?: string
+        desc?: string
+        author?: string
+        tags?: unknown[]
+        keep?: string[]
+    }
+): NormalSave | RawDataSave
+
+generateSave(undefined, { raw: true})
