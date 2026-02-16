@@ -523,7 +523,7 @@ declare let placingImage: HTMLImageElement | null
 declare let dragStart: number | null
 declare let pixelSizeHalf: number
 /** The context */
-declare let ctx: CanvasRenderingContext2D | null
+declare let issues: CanvasRenderingContext2D | null
 
 declare let tps: number
 
@@ -754,3 +754,142 @@ interface GameElement {
 	 */
 	[key: string]: unknown;
 }
+
+/** An element saved in the raw data format */
+type SavedElement = Pick<GameElement, "color" | "element"> & Record<string, unknown>
+
+/** The game version as stored in saves */
+type GameVersion = `${number}.${number}.${number}`
+
+/** Metadata about a save */
+type SaveMetadata = {
+    /** The name of the save */
+    name: string,
+    /** The description of the save */
+    desc: string,
+    /** The author of the save */
+    author: string,
+
+    /** The save format version the save was created with */
+    saveVersion: `sb${number}`,
+    /** The game version the save was created with */
+    gameVersion: GameVersion,
+
+    /** The timestamp of when the save was created */
+    created: number,
+    /** The timestamp of when the save was updated */
+    updated: number,
+    /** The UUID of the save */
+    uuid: string,
+    /** The index of the save in a series */
+    seriesIndex: 0,
+    /** The UUID for the save's series */
+    seriesID: string,
+
+    /** The URL of the page where the save was created */
+    url: string,
+    /** Any tags assigned to the save */
+    tags: unknown[]
+}
+
+/** A save's configuration */
+type SaveConfig = {
+    /** All settings bundled with the save */
+    settings: Record<string, unknown>,
+    /** All mods bundled with the save */
+    mods: string[],
+    /** The elapsed pixel ticks */
+    pixelTicks: number,
+    /** The height of the save */
+    height: number,
+    /** The width of the save */
+    width: number,
+    /** The {@link pixelSize} for a save */
+    pixelSize: number,
+
+    /** The previous setting for TPS */
+    tps: number,
+    /** The element selected at the time of the save's creation */
+    currentElement: string,
+    /** The mode selected when the save was created */
+    view: number,
+    /** Whether the game was paused when the save was created */
+    paused: boolean,
+    /** The size of the cursor when the save was created */
+    mouseSize: number,
+    border: 0
+}
+
+/** A save created with raw data included */
+type RawDataSave = {
+    /** Metadata about the save */
+    meta: SaveMetadata,
+    /** The configuration of the save */
+    saveConfig: SaveConfig,
+    /** The codes used with the save */
+    codes: Record<string, never>,
+    /** The save's pixelmap */
+    pixelMap: (SavedElement | 0)[][],
+    /** Information about grouping */
+    relations: {
+        _id: number,
+        [item: number]: {lastMove: number}
+    }
+}
+
+type NormalSave = {
+    /** Metadata about the save */
+    meta: SaveMetadata,
+    /** The configuration of the save */
+    saveConfig: SaveConfig,
+    /** The codes used with the save */
+    codes: Record<string, string>,
+    /** The save's pixelmap */
+    pixelMap: string
+    /** Information about grouping */
+    relations: {
+        _id: number,
+        [item: number]: {lastMove: number}
+    }
+}
+
+/**
+ * Generates a save
+ * 
+ * @param pixelMap The pixelmap to generate from. Uses the canvas if not specified.
+ * @param options The options to generate with. Defaults to `{}`.
+ * @param options.raw If true, doesn't compress the pixelmap.
+ * 
+ * @param options.mods  
+ * If not false, `mods` is set to {@link enabledMods}. Otherwise, `mods` is set to `[]`
+ * 
+ * @param options.settings 
+ * If not false, `settings` is set to all the items in {@link settings},
+ * except for those in {@link vitalSettings}
+ * 
+ * @param options.name The name to assign to the save
+ * @param options.desc The description to assign to the save
+ * @param options.author The author to assign to the save
+ * @param options.tags Any tags to assign to the save
+ * 
+ * @param options.keep
+ * A custom list of properties to keep. Overrides the list in {@link basicProperties}.
+ * 
+ * @returns
+ * The generated save. {@link NormalSave} if `raw` is `false` and {@link RawDataSave} otherwise
+ */
+declare function generateSave(
+    pixelMap?: Pixel[][],
+    options?: {
+        raw?: true
+        mods?: boolean
+        settings?: boolean
+        name?: string
+        desc?: string
+        author?: string
+        tags?: unknown[]
+        keep?: string[]
+    }
+): NormalSave | RawDataSave
+
+generateSave(undefined, { raw: true})
