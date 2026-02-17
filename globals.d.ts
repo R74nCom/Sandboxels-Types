@@ -879,7 +879,7 @@ type NormalSave = {
  * The generated save. {@link NormalSave} if `raw` is `false` and {@link RawDataSave} otherwise
  */
 declare function generateSave(
-    pixelMap?: (Pixel | undefined)[][],
+    pixelMap?: (Pixel | null)[][],
     options?: {
         raw?: true
         mods?: boolean
