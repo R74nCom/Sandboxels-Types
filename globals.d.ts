@@ -756,7 +756,7 @@ interface GameElement {
 }
 
 /** An element saved in the raw data format */
-type SavedElement = Pick<GameElement, "color" | "element"> & Record<string, unknown>
+type SavedElement = Pick<GameElement, "color" | "temp" | "element"> & Record<string, unknown>
 
 /** The game version as stored in saves */
 type GameVersion = `${number}.${number}.${number}`
