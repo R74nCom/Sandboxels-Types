@@ -317,14 +317,12 @@ declare function RGBToHSL(rgb: [number, number, number]): [number, number, numbe
  */
 declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
 
-type CommaString = string | `${string},${CommaString}`
-type HexDigit = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" |
-                "A" | "B" | "C" | "D" | "E" | "F" |
-                "a" | "b" | "c" | "d" | "e" | "f";
-
-/** A hexadecimal colour */
-type HexColor = `${"#" | ""}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}${HexDigit}`;
-type CommaHexString = HexColor | `${HexColor},${CommaHexString}`
+/** A hexadecimal colour. Not a union type since that makes eslint give up */
+type HexColor = string & {};
+/** A comma separated list of {@link HexColor}. Not really typed since eslint hates that */
+type CommaHexString = string & {};
+/** A comma separated list of arbitrary strings. Not really typed since eslint hates that */
+type CommaString = string & {}
 
 type WithChance<T extends string> = `${T}${`%${number}` | ""}`
 type BehaviorRulesBase = 
