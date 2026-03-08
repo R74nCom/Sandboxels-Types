@@ -1,4 +1,4 @@
-declare const settingType = {
+declare const settingType: {
     COLOR: [0, "#ff0000"],
     TEXT: [1, ""],
     NUMBER: [2, 0],
@@ -17,7 +17,7 @@ declare class Setting<V = string | number | boolean | never[]> {
     disabled: boolean
     defaultValue: V
     description: string
-    validate: (V) => boolean
+    validate: (arg0: V) => boolean
     value: V
 
     /**
@@ -35,21 +35,21 @@ declare class Setting<V = string | number | boolean | never[]> {
         name: string, 
         storageName: string, 
         type?: typeof settingType[keyof typeof settingType], 
-        disabled?: boolean = false, 
-        defaultValue?: V = null, 
-        description?: string = "", 
-        customValidator?: (value: V) => boolean = () => true
+        disabled?: boolean, 
+        defaultValue?: V, 
+        description?: string, 
+        customValidator?: (value?: V) => boolean
     );
 
     /** Updates the localStorage key for the setting */
-    update()
+    update(): void
 
     /** 
      * Sets the value of the setting 
      * 
      * @param value The value to set to
      */
-    set(value: V);
+    set(value: V): boolean | void;
 
     /** 
      * Gets the value of the setting 
@@ -59,17 +59,17 @@ declare class Setting<V = string | number | boolean | never[]> {
     get(): V;
 
     /** Enables the setting */
-    enable();
+    enable(): void;
     
     /** Disables the setting */
-    disable();
+    disable(): void;
 
     /** 
      * Adds a callback to run every time {@link set} is called 
      * 
      * @param callback The callback to run
      */
-    onUpdate(callback: (V) => void);
+    onUpdate(callback: (arg0?: V) => void): void;
 
     /** 
      * The to build the DOM elements for the setting 
@@ -94,12 +94,12 @@ declare class SelectSetting<T> extends Setting<T> {
         name: string, 
         storageName: string, 
         values: [T, string][], 
-        disabled: boolean = false, 
-        defaultValue: T | null = null
+        disabled: boolean, 
+        defaultValue: T | null
     )
 }
 
-class SettingsTab {
+declare class SettingsTab {
     /**
      * The constructor.
      * 
@@ -113,7 +113,7 @@ class SettingsTab {
      * @param setting The setting to register
      * @param category The category to register the setting into
      */
-    registerSetting(setting: Setting, category: string = "General")
+    registerSetting(setting: Setting, category: string): this;
 
     /** 
      * Registers a set of settings into a given category.
@@ -123,7 +123,7 @@ class SettingsTab {
      * @param category The category to put the settings into
      * @param settings The settings to add
      */
-    registerSettings(category: string = "General", ...settings: Setting<unknown>[])
+    registerSettings(category: string, ...settings: Setting<unknown>[]): this
 
     /**
      * Replaces the {@link Setting} object of a given setting (by {@link Setting.storageName storageName})
@@ -131,7 +131,7 @@ class SettingsTab {
      * @param name The storage name of the setting to replace
      * @param value The value to replace it with
      */
-    set<V>(name: string, value: Setting<V>)
+    set<V>(name: string, value: Setting<V>): void
 
     /**
      * Gets a {@link Setting} within the tab based on its {@link Setting.storageName storageName}.
@@ -148,7 +148,7 @@ class SettingsTab {
 }
 
 /** The settings manager singleton. This should be used through {@link settingsManager}. */
-class SettingsManager {
+declare class SettingsManager {
     /** The map of setting tabs stored */
     settings: Map<string, SettingsTab>
 
@@ -160,14 +160,14 @@ class SettingsManager {
      * 
      * @param settingsTab The settings tab to register
      */
-    registerTab(settingsTab: SettingsTab)
+    registerTab(settingsTab: SettingsTab): void
 
     /** 
      * Gets the map settings 
      * 
      * @returns The map of settings
      */
-    getSettings(): SettingsManager.settings
+    getSettings(): SettingsManager["settings"]
 }
 
 declare const settingsManager: SettingsManager
