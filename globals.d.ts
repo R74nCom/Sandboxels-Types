@@ -628,6 +628,8 @@ interface GameElement {
 	hoverStat?: (pixel: Pixel) => void
     /** The renderer for an element */
 	renderer?: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
+    /** This function is called when a tool is hovered over the canvas */
+    renderTool?: (ctx: CanvasRenderingContext2D) => void
     /** The reactions for an element */
 	reactions?: Record<string, ElementReaction>
 
