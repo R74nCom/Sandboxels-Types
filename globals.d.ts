@@ -675,7 +675,7 @@ interface GameElement {
 
     /** The state of an element */
 	state?: "solid" | "liquid" | "gas"
-    /** The density of an element */
+    /** The density of an element in kg/m³*/
 	density?: number
 	insulate?: boolean
 	viscosity?: number
