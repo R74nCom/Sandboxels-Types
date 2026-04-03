@@ -552,6 +552,7 @@ declare let renderPresets: {
 	[key: string]: RenderPresets
 }
 
+declare let loadedMods: string[]
 declare let enabledMods: string[]
 
 declare let defaultCooldown: number
