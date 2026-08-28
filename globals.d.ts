@@ -270,9 +270,8 @@ declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function canvasCoord(n: number): number
 
-// --- Non game specific utilities
+// --- General purpose utilities
 
-// General utilites
 /** Randomly chooses an item from the array */
 declare function choose<T>(array: T[]): T
 /** Averages all values in an array */
