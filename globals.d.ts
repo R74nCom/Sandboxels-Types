@@ -891,5 +891,3 @@ declare function generateSave(
         keep?: string[]
     }
 ): NormalSave | RawDataSave
-
-generateSave(undefined, { raw: true})
