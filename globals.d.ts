@@ -32,6 +32,8 @@ interface Pixel {
 	flipY?: boolean;
 	/** Rotation of the pixel (either 0, 1, 2 or 3) */
 	r?: number;
+	/** Contents of the pixel, only works when canContain is true (used in pipe and filter) */
+	con?: Pixel;
 
 	/**
 	 * Any additional custom properties.
@@ -161,7 +163,7 @@ declare function movePixel(pixel: Pixel, x: number, y: number, leaveBehind?: boo
  * @param handler - The callback to run after the ok button is pressed.
  * @param title - The title for the prompt.
  */
-declare function promptText(text: string, handler: () => void, title?: string): void
+declare function promptText(text: string, handler?: () => void, title?: string): void
 /**
  * Show a prompt with confirm/cancel buttons
  *
@@ -201,9 +203,9 @@ declare function promptChoose(text: string, choices: string[], handler: (value: 
  * at all if the window is closed directly.
  *
  * The values for the value parameter are:\
- * 0: left\
+ * 0: right\
  * 1: down\
- * 2: right\
+ * 2: left\
  * 3: up
  * @param title - The title for the prompt
  * @param defaultInput - The default value for the textbox
@@ -242,7 +244,7 @@ declare function eListAdd(listName: string, itemList: string[] | string): void
 declare function drawDefault(ctx: CanvasRenderingContext2D, pixel: Pixel): void
 declare function shuffleArray(array: unknown[]): void
 declare function pixelTempCheck(pixel: Pixel): void
-declare function getNeighbors(pixel: Pixel): (Pixel | null)[]
+declare function getNeighbors(pixel: Pixel): Pixel[]
 declare function circleCoords(x: number, y: number, radius: number): { x: number, y: number }[]
 declare function addElement(key: string, obj: GameElement): void
 declare function addCanvasLayer(name: string): void
@@ -269,9 +271,99 @@ declare function tick(): void
 declare function togglePause(): void
 declare function validateMoves(callback: () => void): void
 declare function canvasCoord(n: number): number
+declare function saveToFile(): void
+declare function confirmSave(): void
+declare function saveSettings(): void
+declare function lineCoords(x1: number, y1: number, x2: number, y2: number, width?: number): [number, number][]
 
-// --- General purpose utilities
+declare let editingPixels: unknown[]
+declare let mouseIsDown: boolean
+declare let editMode: boolean
+declare let showingMenu: string
+declare let mouseColor: string
+declare let canvasLayersCtx: {
+	pixels: CanvasRenderingContext2D,
+	gui: CanvasRenderingContext2D
+};
+declare let mode: "replace" | null
 
+/** The {@link setInterval} ID for the logger */
+declare let logInterval: number | null
+/** 
+ * Set the current view
+ * 
+ * @param view The view index to set to
+ */
+declare function setView(view: number): void
+/** Toggles edit mode */
+declare function toggleEditMode(): void
+declare function showPromptScreen(): void
+declare function checkPause(): void
+declare function closeMenu(): void
+
+/** The current state of the prompt */
+declare let promptState: {
+	/** The type of the current prompt */
+	type: "confirm" | "choose" | "dir" | "text"
+	/** The prompt title */
+	title?: string
+	/** The text in the prompt */
+	text?: string
+	/** The list of choices (only applies for choose prompts) */
+	choices?: string[]
+	/** The handler to call when the prompt is confirmed */
+	handler?: (data: unknown) => void
+
+	/** Whether the game was paused before the prompt */
+	paused?: boolean
+	after?: () => void
+	html?: string
+	danger?: boolean
+} | null
+
+/** 
+ * Close the currently open menu.
+ * 
+ * @param nextMenu 
+ * If this is set to prompt and the current menu is also prompt, it prevents the prompt element from
+ * being hidden in betwen
+ */
+declare function closeMenu(nextMenu: string): void
+/**
+ * Shows information about an element
+ * 
+ * @param element The element to show information about
+ * @param back
+ */
+declare function showInfo(element: string, back: string[] | boolean): void
+/**
+ * Runs the prompt handler in {@link promptState} and does cleanup
+ * 
+ * @remarks
+ * 
+ * The function
+ * 
+ * 1. Unpauses the game
+ * 2. Hides the prompt
+ * 3. Sets {@link promptState} to null
+ * 4. Runs {@link promptState.handler} if defined
+ * 5. Runs {@link promptState.after} if defined
+ * 
+ * in order. {@link promptState.handler} and {@link promptState.after} are preserved before {@link promptState}
+ * is nulled.
+ * 
+ * @param result The value to pass to the handler
+ */
+declare function handlePrompt(result: unknown): void
+
+/** Prompts to load from a file */
+declare function loadFromFile(): void
+/** The data from the previous save loaded with {@link loadFromFile} */
+declare let lastSaveJSON: Record<string, any>
+
+// --- Non game specific utilities
+
+// General utilites
 /** Randomly chooses an item from the array */
 declare function choose<T>(array: T[]): T
 /** Averages all values in an array */
@@ -315,47 +407,6 @@ declare function RGBToHSL(rgb: [number, number, number]): [number, number, numbe
  * @return - The RGB representation
  */
 declare function HSLtoRGB(hsl: [number, number, number]): [number, number, number]
-
-/** A hexadecimal colour. Not a union type since that makes eslint give up */
-type HexColor = string & {};
-/** A comma separated list of {@link HexColor}. Not really typed since eslint hates that */
-type CommaHexString = string & {};
-/** A comma separated list of arbitrary strings. Not really typed since eslint hates that */
-type CommaString = string & {}
-
-type WithChance<T extends string> = `${T}${`%${number}` | ""}`
-type BehaviorRulesBase = 
-	| `XX`
-	| "M1"
-	| "M2"
-	| "SP"
-	| "SA"
-	| "DL"
-	| "DB"
-	| "CL"
-	| "CF"
-	| `CH:${CommaString}${`>${CommaString}` | ""}`
-	| `C2:${CommaString}`
-	| `CR${`:${CommaString}` | ""}`
-	| `LB:${CommaString}`
-	| `L1:${CommaString}`
-	| `L2:${CommaString}`
-	| `SW:${CommaString}`
-	| `HT${`:${number}` | ""}`
-	| `CO${`:${number}` | ""}`
-	| `CC:${CommaHexString}`
-	| "ST"
-	| `SH${`:${string}` | ""}`
-	| "BO"
-	| `EX:${number}${`>${CommaString}` | ""}`
-
-type CenterBehaviorBase = BehaviorRulesBase
-	| "FX"
-	| "FY"
-	| "RT"
-
-type BehaviorRule = WithChance<BehaviorRulesBase>
-type CenterBehavior = WithChance<CenterBehaviorBase>
 
 /**
  * A behaviour. A more detailed explanation is in {@link https://sandboxels.wiki.gg/wiki/Behavior the wiki}.
@@ -471,6 +522,8 @@ declare const eLists: {
 
 declare let pixelTicks: number
 
+declare let currentElement: string
+
 declare let isMobile: boolean
 
 declare let currentPixels: Pixel[]
@@ -511,7 +564,7 @@ declare let settings: {
 }
 
 declare let keybinds: {
-	[key: string]: () => unknown
+	[key: string]: () => any
 }
 
 declare let shiftDown: number
@@ -521,13 +574,16 @@ declare let placingImage: HTMLImageElement | null
 declare let dragStart: number | null
 declare let pixelSizeHalf: number
 /** The context */
-declare let issues: CanvasRenderingContext2D | null
+declare let ctx: CanvasRenderingContext2D | null
 
 declare let tps: number
+/** Whether the html file was openned locally */
+declare let isLocalFile: boolead
 
 declare let view: number
 
 declare let paused: boolean
+declare type HexColor = string
 
 declare let btemp: {
 	[key: string]: unknown
@@ -538,6 +594,11 @@ declare let textures: {
 	BRICK: string[]
 
 	[key: string]: string[]
+}
+
+declare let langCode: string | null
+declare let lang: {
+	[key: string]: string
 }
 
 type MainCategories =
@@ -566,7 +627,7 @@ declare let pixelSize: number
 
 // Some of these might be wrong
 interface GameElement {
-    /** The autogenerated ID for an element. */
+	/** The autogenerated ID for an element. */
 	id?: number
 	/** The name of the element */
 	name?: string
@@ -576,16 +637,16 @@ interface GameElement {
 	category?: Category
 	/** A description for the element */
 	desc?: string
-    /** Extra info about an element */
+	/** Extra info about an element */
 	extraInfo?: string
-    /** Related element(s). */
+	/** Related element(s). */
 	related?: string | string[]
 	hidden?: boolean
-    /** Whether to show an element with dark text (default false) */
+	/** Whether to show an element with dark text (default false) */
 	darkText?: boolean
-    /** Whether an element should be placeable (default false) */
+	/** Whether an element should be placeable (default false) */
 	canPlace?: boolean
-    /** Whether to hide an element in cheerful mode or not (default false) */
+	/** Whether to hide an element in cheerful mode or not (default false) */
 	nocheer?: boolean
 	forceAutoGen?: boolean
 	/**
@@ -612,108 +673,109 @@ interface GameElement {
 	tick2?: (pixel: Pixel) => void
 	tool?: (pixel: Pixel) => void
 	onMouseUp?: () => void
-	onMouseDown?: () => void
+	onMouseDown?: (e: MouseEvent) => void
 	/** Run when an element is selected. */
 	onSelect?: () => void
 	onUnselect?: () => void
 	onPlace?: (pixel: Pixel) => void
-    /** Callback run when an element is deleted. */
+	/** Run when the elements temperature reaches `stateHigh` */
+	onStateHigh?: (pixel: Pixel) => void
+	/** Callback run when an element is deleted. */
 	onDelete?: (pixel: Pixel) => void
 	onChange?: (pixel: Pixel) => void
+	onPress?: (pixel: Pixel) => void
 	/** Run when a pixel is mixed. The pixel is provided as an argument. */
 	onMix?: (pixel: Pixel) => void
 	/** Run when a pixel is broken. The pixel is provided as an argument. */
 	onBreak?: (pixel: Pixel) => void
 	perTick?: () => void
-	hoverStat?: (pixel: Pixel) => void
-    /** The renderer for an element */
+	hoverStat?: (pixel: Pixel) => string
+	/** The renderer for an element */
 	renderer?: (pixel: Pixel, ctx: CanvasRenderingContext2D) => void
-    /** This function is called when a tool is hovered over the canvas */
-    renderTool?: (ctx: CanvasRenderingContext2D) => void
-    /** The reactions for an element */
+	/** The reactions for an element */
 	reactions?: Record<string, ElementReaction>
 
 	temp?: number
-    /** The temperature at which to transitition into {@link stateLow} */
+	/** The temperature at which to transitition into {@link stateLow} */
 	tempLow?: number
-    /** The element to transition into when the temperature is {@link tempLow} */
+	/** The element to transition into when the temperature is {@link tempLow} */
 	stateLow?: string | null | (string | null)[]
-    /** 
-     * The prefix for the name to give to the autogenerated element if {@link stateLow} is 
-     * unset. 
-     * 
-     * If this and {@link stateLow} are unset, it will add the suffix `_ice` to the
-     * element's name, after removing `liquid_` (if it's a prefix) and `_water` (if it's a
-     * suffix). (freezing)
-     */
+	/** 
+	 * The prefix for the name to give to the autogenerated element if {@link stateLow} is 
+	 * unset. 
+	 * 
+	 * If this and {@link stateLow} are unset, it will add the suffix `_ice` to the
+	 * element's name, after removing `liquid_` (if it's a prefix) and `_water` (if it's a
+	 * suffix). (freezing)
+	 */
 	stateLowName?: string
-    /** The colour (s) to set to {@link stateLow} after freezing. */
+	/** The colour (s) to set to {@link stateLow} after freezing. */
 	stateLowColor?: HexColor | HexColor[]
-    /** The multiplier to the default colours for {@link stateLow} after freezing. */
+	/** The multiplier to the default colours for {@link stateLow} after freezing. */
 	stateLowColorMultiplier?: number[] | number
 
 	/** The temperature at which the element changes to the element provided by `stateHigh` */
 	tempHigh?: number
 	/** The element to change to at `tempHigh` */
 	stateHigh?: string | null | (string | null)[]
-    /** 
-     * The prefix for the name to give to the autogenerated element if {@link stateHigh} is 
-     * unset. 
-     * 
-     * If this and {@link stateHigh} are unset, it will add the suffix `_gas` to the
-     * element's name, after removing `liquid_` and `molten_` if they're prefixes and it's
-     * a liquid. (evaporation)
-     */
+	/** 
+	 * The prefix for the name to give to the autogenerated element if {@link stateHigh} is 
+	 * unset. 
+	 * 
+	 * If this and {@link stateHigh} are unset, it will add the suffix `_gas` to the
+	 * element's name, after removing `liquid_` and `molten_` if they're prefixes and it's
+	 * a liquid. (evaporation)
+	 */
 	stateHighName?: string
-    /** The colour (s) to set to {@link stateHigh} after freezing. */
+	/** The colour (s) to set to {@link stateHigh} after freezing. */
 	stateHighColor?: string
-    /** The multiplier to the default colours for {@link stateHigh} after freezing. */
+	/** The multiplier to the default colours for {@link stateHigh} after freezing. */
 	stateHighColorMultiplier?: number[] | number
 
 	extraTempLow?: { [temperature: number]: string | string[] }
 	extraTempHigh?: { [temperature: number]: string | string[] }
 
-    /** The state of an element */
+	/** The state of an element */
 	state?: "solid" | "liquid" | "gas"
-    /** The density of an element in kg/m³*/
+	/** The density of an element in kg/m³*/
 	density?: number
 	insulate?: boolean
 	viscosity?: number
 
-    /** How conductive an element is */
+	/** How conductive an element is */
 	conduct?: number
 	ignoreConduct?: string[]
 	superconductAt?: number
-    /** If non zero, the speed at which an element should stain other elements [0-1] */
+	/** If non zero, the speed at which an element should stain other elements [0-1] */
 	stain?: number
 	stainSelf?: boolean
 
 	charge?: number
-    /** Whether an element can be dragged without shift. Defaults to true. */
+	/** Whether an element can be dragged without shift. Defaults to true. */
 	movable?: boolean
-    /** 
-     * The probability for an element to break. If it's 0, it has a 25% chance to break with
-     * the smash tool (100% with shift), and if it's 1, it's impossible to break. If unset,
-     * it defaults to 1.
-     */
+	/** 
+	 * The probability for an element to break. If it's 0, it has a 25% chance to break with
+	 * the smash tool (100% with shift), and if it's 1, it's impossible to break. If unset,
+	 * it defaults to 1.
+	 */
 	hardness?: number
-    /** The set of properties to set on pixel creation. */
+	/** The set of properties to set on pixel creation. */
 	properties?: { [key: string]: unknown }
-    /** The maximum size for the cursor when placing an element. */
+	/** The maximum size for the cursor when placing an element. */
 	maxSize?: number
 
-    /** How much food a pixel needs to eat before laying an egg based on {@link egg}. Defaults to 30.*/
-    foodNeed?: number
-    /** The element eggs hatch into. Ignored if {@link egg} is set. */
+	/** How much food a pixel needs to eat before laying an egg based on {@link egg}. Defaults to 30.*/
+	foodNeed?: number
+	/** The element eggs hatch into. Ignored if {@link egg} is set. */
 	baby?: string
-    /** The type of egg a pixel lays. */
+	/** The type of egg a pixel lays. */
 	egg?: string
-    /** The colour of eggs to lay. */
+	/** The colour of eggs to lay. */
 	eggColor?: HexColor | HexColor[]
 
-    /** Whether an element is food or not */
-    isFood?: boolean
-    /** Whether an element is a gas or not. */
+	/** Whether an element is food or not */
+	isFood?: boolean
+	/** Whether an element is a gas or not. */
 	isGas?: boolean
 
 	seed?: string | boolean
@@ -725,18 +787,18 @@ interface GameElement {
 	canContain?: boolean
 	extinguish?: boolean
 
-    /** The colour(s) of fire to burn with */
+	/** The colour(s) of fire to burn with */
 	fireColor?: HexColor | HexColor[]
-    /** The element(s) to burn into. */
-    burnInto?: string | string[]
-    /** The amount of time to burn for */
-    burnTime?: number
-    /** 
-     * The flammability of an element. If the element starts burning and this
-     * is unset, it stops burning. 
-     */
-    burn?: number
-    /** The element(s) to be in the fire. */
+	/** The element(s) to burn into. */
+	burnInto?: string | string[]
+	/** The amount of time to burn for */
+	burnTime?: number
+	/** 
+	 * The flammability of an element. If the element starts burning and this
+	 * is unset, it stops burning. 
+	 */
+	burn?: number
+	/** The element(s) to be in the fire. */
 	fireElement?: string | string[]
 
 	rotatable?: boolean
@@ -745,8 +807,11 @@ interface GameElement {
 
 	/** The element or list of elements to break into. */
 	breakInto?: string | string[]
-    /** The colour(s) to set on the elements to break into */
+	/** The colour(s) to set on the elements to break into */
 	breakIntoColor?: HexColor | HexColor[]
+	/** Prioritizes (positive) or deprioritizes (negative) tick order (integer; default 0) */
+	updateOrder?: number
+	hoverRender?: (ctx: CanvasRenderingContext2D) => void
 
 	/**
 	 * Any additional custom properties.
